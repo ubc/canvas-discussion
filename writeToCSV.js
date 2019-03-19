@@ -1,8 +1,7 @@
 const fs = require('fs')
 const path = require('path')
-const { promisify } = require('util')
-const fswrite = promisify(fs.writeFile)
-const fsappend = promisify(fs.appendFile)
+const fswrite = fs.writeFileSync
+const fsappend = fs.appendFileSync
 
 const writeHeader = (pathToFile, header) => fswrite(pathToFile, header + '\r\n')
 const append = (pathToFile, row) => fsappend(pathToFile, row + '\r\n')
@@ -24,7 +23,6 @@ const writeToCSV = data => {
   data.forEach(discussion => {
     if (discussion.hasOwnProperty('replies')) {
       discussion.replies.forEach(reply => reply.forEach(response => {
-        console.log(response)
         append(csv, [
           response.author,
           escapeComment(discussion.topicTitle),
