@@ -25,31 +25,32 @@ async function getDiscussions (courseId) {
     .then(discussions => discussions.map(x => x.id))
 
   return Promise.all(discussionTopicIds.map(topicId =>
-    Promise.all([getFullDiscussion(courseId, topicId), getDiscussionTopic(courseId, topicId)])
-      .then(([discussion, topic]) => ({ discussion, topic }))
-      .then(({ discussion, topic }) => {
-        const topicTitle = topic.title
-        const topicMessage = topic.message
-        const author = topic.author
-        // const participants = discussion.participants
-        if (discussion.view.length > 0) {
-          const replies = discussion.view
-            .filter(x => !x.deleted) // remove deleted posts as they contain no data
-            .map(reply => getNestedReplies(reply))
-          return {
-            topicTitle,
-            topicMessage,
-            author: author.id || '',
-            replies
-          }
-        } else {
-          return {
-            topicTitle,
-            topicMessage,
-            author: author.id || ''
-          }
+    Promise.all([
+      getFullDiscussion(courseId, topicId),
+      getDiscussionTopic(courseId, topicId)
+    ]).then(([discussion, topic]) => {
+      const topicTitle = topic.title
+      const topicMessage = topic.message
+      const author = topic.author
+      // const participants = discussion.participants
+      if (discussion.view.length > 0) {
+        const replies = discussion.view
+          .filter(x => !x.deleted) // remove deleted posts as they contain no data
+          .map(reply => getNestedReplies(reply))
+        return {
+          topicTitle,
+          topicMessage,
+          author: author.id || '',
+          replies
         }
-      })
+      } else {
+        return {
+          topicTitle,
+          topicMessage,
+          author: author.id || ''
+        }
+      }
+    })
   ))
 }
 
