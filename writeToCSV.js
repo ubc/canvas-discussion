@@ -6,7 +6,7 @@ const fsappend = fs.appendFileSync
 const writeHeader = (pathToFile, header) => fswrite(pathToFile, header + '\r\n')
 const append = (pathToFile, row) => fsappend(pathToFile, row + '\r\n')
 
-const escapeComment = comment => '"' + comment.replace(/"/g, "'") + '"'
+const escapeComment = comment => comment ? '"' + comment.replace(/"/g, "'") + '"' : ''
 
 const writeToCSV = data => {
   const csv = path.join(__dirname, 'output.csv')
