@@ -9,14 +9,23 @@ const writeToCSV = require('./writeToCSV')
 function getNestedReplies (replyObj) {
   if (replyObj.hasOwnProperty('replies')) {
     return flatten(
-      [{ author: replyObj.user_id, message: replyObj.message },
-        flatten(
-          replyObj.replies.map(replyObj => getNestedReplies(replyObj))
-        )
-      ]
+      [{
+        author: replyObj.user_id,
+        message: replyObj.message,
+        likes: replyObj.rating_sum,
+        timestamp: replyObj.created_at
+      },
+      flatten(
+        replyObj.replies.map(replyObj => getNestedReplies(replyObj))
+      )]
     )
   } else {
-    return [{ author: replyObj.user_id, message: replyObj.message }]
+    return [{
+      author: replyObj.user_id,
+      message: replyObj.message,
+      likes: replyObj.rating_sum,
+      timestamp: replyObj.created_at
+    }]
   }
 }
 
@@ -32,6 +41,7 @@ async function getDiscussions (courseId) {
       const topicTitle = topic.title
       const topicMessage = topic.message
       const author = topic.author
+      const timestamp = topic.created_at
       // const participants = discussion.participants
       if (discussion.view.length > 0) {
         const replies = discussion.view
@@ -47,7 +57,8 @@ async function getDiscussions (courseId) {
         return {
           topicTitle,
           topicMessage,
-          author: author.id || ''
+          author: author.id || '',
+          timestamp
         }
       }
     })

@@ -15,7 +15,9 @@ const writeToCSV = data => {
     'author_id',
     'discussion_topic_title',
     'discussion_topic_message',
-    'reply'
+    'reply',
+    'count_of_likes',
+    'timestamp'
   ]
 
   writeHeader(csv, header)
@@ -27,7 +29,9 @@ const writeToCSV = data => {
           response.author,
           escapeComment(discussion.topicTitle),
           escapeComment(discussion.topicMessage),
-          escapeComment(response.message)
+          escapeComment(response.message),
+          response.likes,
+          response.timestamp
         ]
         )
       }))
@@ -35,7 +39,10 @@ const writeToCSV = data => {
       append(csv, [
         discussion.author,
         escapeComment(discussion.topicTitle),
-        escapeComment(discussion.topicMessage)
+        escapeComment(discussion.topicMessage),
+        '',
+        '',
+        discussion.timestamp
       ])
     }
   })
