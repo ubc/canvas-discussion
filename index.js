@@ -65,5 +65,5 @@ async function getDiscussions (courseId) {
   ))
 }
 
-getDiscussions(/* add Canvas course id here */)
+getDiscussions(30739)
   .then(discussions => writeToCSV(discussions))
