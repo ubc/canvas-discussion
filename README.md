@@ -1,7 +1,7 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 # Canvas Discussion
 
-This project pulls via the Canvas API the discussions from the specified Canvas course and exports it as CSV/JSON.
+This project pulls via the Canvas API the discussions from the specified Canvas course and exports it as CSV.
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for use with your own API tokens and Canvas domains.
