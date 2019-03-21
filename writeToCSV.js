@@ -13,6 +13,9 @@ const writeToCSV = data => {
 
   const header = [
     'author_id',
+    'author_name',
+    'post_id',
+    'parent_id',
     'discussion_topic_title',
     'discussion_topic_message',
     'reply',
@@ -26,18 +29,23 @@ const writeToCSV = data => {
     if (discussion.hasOwnProperty('replies')) {
       discussion.replies.forEach(reply => reply.forEach(response => {
         append(csv, [
-          response.author,
+          response.authorId,
+          response.authorName,
+          response.id,
+          response.parentId,
           escapeComment(discussion.topicTitle),
           escapeComment(discussion.topicMessage),
           escapeComment(response.message),
           response.likes,
           response.timestamp
-        ]
-        )
+        ])
       }))
     } else {
       append(csv, [
-        discussion.author,
+        discussion.authorId,
+        discussion.authorName,
+        discussion.id,
+        '', // discussion topics cannot have a parent ID
         escapeComment(discussion.topicTitle),
         escapeComment(discussion.topicMessage),
         '',
