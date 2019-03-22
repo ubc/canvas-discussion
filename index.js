@@ -22,7 +22,6 @@ const getNestedReplies = (replyObj, topicId) => {                 // recursively
   )
 }
 
-
 const getDiscussions = async courseId => {
   const discussionTopicIds = await getDiscussionTopicIds(courseId) // get discussion topic ids for given course
   return Promise.all(
@@ -49,8 +48,7 @@ const getDiscussions = async courseId => {
           timestamp,
           replies                                                  // replies to discussion are stored in an array
         }
-      })
-      )
+      }))
   )
 }
 
