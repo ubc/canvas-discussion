@@ -2,8 +2,7 @@ const { getDiscussionTopics, getDiscussionTopic, getFullDiscussion } = require('
 const { flatten } = require('./util')
 const writeToCSV = require('./writeToCSV')
 
-// recursively get nested replies and flatten result
-function getNestedReplies(replyObj, topicId) {
+function getNestedReplies (replyObj, topicId) {                    // recursively get nested replies and flatten result
   const replies = replyObj.hasOwnProperty('replies')
     ? flatten(
       replyObj.replies.map(replyObj => getNestedReplies(replyObj))
@@ -24,33 +23,32 @@ const getDiscussionTopicIds = courseId => getDiscussionTopics(courseId)
   .then(discussions => discussions.map(x => x.id))
 
 const getDiscussions = async courseId => {
-  const discussionTopicIds = await getDiscussionTopicIds(courseId)
+  const discussionTopicIds = await getDiscussionTopicIds(courseId) // get discussion topic ids for given course
   return Promise.all(
     discussionTopicIds
-      .map(topicId =>
-        Promise.all([
-          getFullDiscussion(courseId, topicId),
-          getDiscussionTopic(courseId, topicId)
-        ]).then(([discussion, topic]) => {
-          const topicTitle = topic.title
-          const topicMessage = topic.message
-          const author = topic.author
-          const timestamp = topic.created_at
-          const topicId = topic.id
-          const replies = discussion.view.length > 0
-            ? discussion.view
-              .filter(x => !x.deleted) // remove deleted posts as they contain no data
-              .map(reply => getNestedReplies(reply, topicId))
-            : []
-          return {
-            topicTitle,
-            topicMessage,
-            id: topicId,
-            authorId: author.id || '',
-            timestamp,
-            replies
-          }
-        })
+      .map(topicId => Promise.all([                                // concurrently retrieve discussion topic and any replies for a given discussion topic Id
+        getFullDiscussion(courseId, topicId),
+        getDiscussionTopic(courseId, topicId)
+      ]).then(([discussion, topic]) => {                         // array destructure result of the two API calls
+        const topicTitle = topic.title
+        const topicMessage = topic.message
+        const author = topic.author
+        const timestamp = topic.created_at
+        const topicId = topic.id
+        const replies = discussion.view.length > 0               // if discussion 'view' array has any element, then there are replies to this discussion
+          ? discussion.view
+            .filter(x => !x.deleted)                             // remove deleted posts as they contain no data
+            .map(reply => getNestedReplies(reply, topicId))
+          : []                                                   // discussion doesn't have 'view', so return empty array
+        return {
+          topicTitle,
+          topicMessage,
+          id: topicId,
+          authorId: author.id || '',
+          timestamp,
+          replies                                                // replies to discussion are stored in an array
+        }
+      })
       )
   )
 }

@@ -25,10 +25,10 @@ const writeToCSV = data => {
   writeHeader(csv, header)
 
   data.forEach(discussion => {
-    append(csv, [
+    append(csv, [                               // write discussion to CSV
       discussion.authorId,
       discussion.id,
-      '', // discussion topics cannot have a parent ID
+      '',                                       // discussion topics cannot have a parent ID
       escapeComment(discussion.topicTitle),
       escapeComment(discussion.topicMessage),
       '',
@@ -36,18 +36,20 @@ const writeToCSV = data => {
       discussion.timestamp
     ])
 
-    discussion.replies.forEach(reply => reply.forEach(response => {
-      append(csv, [
-        response.authorId,
-        response.id,
-        response.parentId,
-        escapeComment(discussion.topicTitle),
-        escapeComment(discussion.topicMessage),
-        escapeComment(response.message),
-        response.likes,
-        response.timestamp
-      ])
-    }))
+    discussion.replies.forEach(reply =>
+      reply.forEach(response => {
+        append(csv, [                              // write replies to CSV
+          response.authorId,
+          response.id,
+          response.parentId,
+          escapeComment(discussion.topicTitle),
+          escapeComment(discussion.topicMessage),
+          escapeComment(response.message),
+          response.likes,
+          response.timestamp
+        ])
+      })
+    )
   })
 }
 
