@@ -25,10 +25,10 @@ const writeToCSV = data => {
   writeHeader(csv, header)
 
   data.forEach(discussion => {
-    append(csv, [                               // write discussion to CSV
+    append(csv, [                                 // write discussion to CSV
       discussion.authorId,
       discussion.id,
-      '',                                       // discussion topics cannot have a parent ID
+      '',                                         // discussion topics cannot have a parent ID
       escapeComment(discussion.topicTitle),
       escapeComment(discussion.topicMessage),
       '',
