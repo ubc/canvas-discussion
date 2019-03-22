@@ -13,12 +13,11 @@ const writeToCSV = data => {
 
   const header = [
     'author_id',
-    'author_name',
     'post_id',
-    'parent_id',
+    'post_parent_id',
     'discussion_topic_title',
     'discussion_topic_message',
-    'reply',
+    'post_message',
     'count_of_likes',
     'timestamp'
   ]
@@ -26,33 +25,29 @@ const writeToCSV = data => {
   writeHeader(csv, header)
 
   data.forEach(discussion => {
-    if (discussion.hasOwnProperty('replies')) {
-      discussion.replies.forEach(reply => reply.forEach(response => {
-        append(csv, [
-          response.authorId,
-          response.authorName,
-          response.id,
-          response.parentId,
-          escapeComment(discussion.topicTitle),
-          escapeComment(discussion.topicMessage),
-          escapeComment(response.message),
-          response.likes,
-          response.timestamp
-        ])
-      }))
-    } else {
+    append(csv, [
+      discussion.authorId,
+      discussion.id,
+      '', // discussion topics cannot have a parent ID
+      escapeComment(discussion.topicTitle),
+      escapeComment(discussion.topicMessage),
+      '',
+      '',
+      discussion.timestamp
+    ])
+
+    discussion.replies.forEach(reply => reply.forEach(response => {
       append(csv, [
-        discussion.authorId,
-        discussion.authorName,
-        discussion.id,
-        '', // discussion topics cannot have a parent ID
+        response.authorId,
+        response.id,
+        response.parentId,
         escapeComment(discussion.topicTitle),
         escapeComment(discussion.topicMessage),
-        '',
-        '',
-        discussion.timestamp
+        escapeComment(response.message),
+        response.likes,
+        response.timestamp
       ])
-    }
+    }))
   })
 }
 
