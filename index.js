@@ -1,11 +1,11 @@
-const { getDiscussionTopics, getDiscussionTopic, getFullDiscussion } = require('node-canvas-api')
+const capi = require('node-canvas-api')
 const { flatten } = require('./util')
 const writeToCSV = require('./writeToCSV')
 
-const getDiscussionTopicIds = courseId => getDiscussionTopics(courseId)
+const getDiscussionTopicIds = courseId => capi.getDiscussionTopics(courseId)
   .then(discussions => discussions.map(x => x.id))
 
-function getNestedReplies(replyObj, topicId) {                    // recursively get nested replies and flatten result
+const getNestedReplies = (replyObj, topicId) => {                 // recursively get nested replies and flatten result
   const replies = replyObj.hasOwnProperty('replies')
     ? flatten(
       replyObj.replies.map(replyObj => getNestedReplies(replyObj))
@@ -28,8 +28,8 @@ const getDiscussions = async courseId => {
   return Promise.all(
     discussionTopicIds
       .map(topicId => Promise.all([                                // concurrently retrieve discussion topic and any replies for a given discussion topic Id
-        getFullDiscussion(courseId, topicId),
-        getDiscussionTopic(courseId, topicId)
+        capi.getFullDiscussion(courseId, topicId),
+        capi.getDiscussionTopic(courseId, topicId)
       ]).then(([discussion, topic]) => {                           // array destructure result of the two API calls
         const topicTitle = topic.title
         const topicMessage = topic.message
