@@ -10,16 +10,14 @@ const getNestedReplies = (replyObj, topicId) => {                 // recursively
     ? flatten(
       replyObj.replies.map(replyObj => getNestedReplies(replyObj))
     ) : []
-  return flatten(
-    [{
-      authorId: replyObj.user_id,
-      message: replyObj.message,
-      likes: replyObj.rating_sum,
-      timestamp: replyObj.created_at,
-      parentId: replyObj.parent_id || topicId,
-      id: replyObj.id
-    }, ...replies]
-  )
+  return [{
+    authorId: replyObj.user_id,
+    message: replyObj.message,
+    likes: replyObj.rating_sum,
+    timestamp: replyObj.created_at,
+    parentId: replyObj.parent_id || topicId,
+    id: replyObj.id
+  }, ...replies]
 }
 
 const getDiscussions = async courseId => {
