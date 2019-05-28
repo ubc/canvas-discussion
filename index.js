@@ -50,5 +50,5 @@ const getDiscussions = async courseId => {
   )
 }
 
-getDiscussions(30739)                                              // 30739 is ID of hackUBC course
+getDiscussions(/* */)                                              // add course ID here!
   .then(discussions => writeToCSV(discussions))                    // write result to CSV
