@@ -18,7 +18,7 @@ These instructions will get you a copy of the project up and running on your loc
 1. **Install [Node 10 or greater](https://nodejs.org)**.
 2. **Install [Git](https://git-scm.com/downloads)**.
 
-### Installion and execution of script
+### Installation and execution of script
 
 1. Clone this repo. `git clone https://github.com/justin0022/canvas-discussion.git`
 1. Then cd into the repo. `cd canvas-discussion`
