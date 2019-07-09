@@ -28,3 +28,12 @@ These instructions will get you a copy of the project up and running on your loc
 1. Add your course ID to `index.js`, where it says: `getDiscussions(/* add Canvas course id here */)`
 1. Run the script. `npm start`.
 1. An `output.csv` file should be generated with discussion data.
+
+## Authors
+
+* [justin0022](https://github.com/justin0022) -
+**Justin Lee** &lt;justin.lee@ubc.ca&gt;
+
+## License
+
+This project is licensed under the GNU General Public License v3.0.
