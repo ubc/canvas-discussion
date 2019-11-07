@@ -5,7 +5,8 @@ const writeToCSV = require('./writeToCSV')
 const getDiscussionTopicIds = courseId => capi.getDiscussionTopics(courseId)
   .then(discussions => discussions.map(x => x.id))
 
-const getNestedReplies = (replyObj, topicId) => {                 // recursively get nested replies and flatten result
+// recursively get nested replies and flatten result
+const getNestedReplies = (replyObj, topicId) => {
   const replies = replyObj.hasOwnProperty('replies')
     ? flatten(
       replyObj.replies.map(replyObj => getNestedReplies(replyObj))
@@ -21,34 +22,43 @@ const getNestedReplies = (replyObj, topicId) => {                 // recursively
 }
 
 const getDiscussions = async courseId => {
-  const discussionTopicIds = await getDiscussionTopicIds(courseId) // get discussion topic ids for given course
+  // get discussion topic ids for given course
+  const discussionTopicIds = await getDiscussionTopicIds(courseId)
   return Promise.all(
     discussionTopicIds
-      .map(topicId => Promise.all([                                // concurrently retrieve discussion topic and any replies for a given discussion topic Id
+      // concurrently retrieve discussion topic and any replies for a given discussion topic Id
+      .map(topicId => Promise.all([
         capi.getFullDiscussion(courseId, topicId),
         capi.getDiscussionTopic(courseId, topicId)
-      ]).then(([discussion, topic]) => {                           // array destructure result of the two API calls
-        const topicTitle = topic.title
-        const topicMessage = topic.message
-        const author = topic.author
-        const timestamp = topic.created_at
-        const topicId = topic.id
-        const replies = discussion.view.length > 0                 // if discussion 'view' array has any element, then there are replies to this discussion
-          ? discussion.view
-            .filter(x => !x.deleted)                               // remove deleted posts as they contain no data
-            .map(reply => getNestedReplies(reply, topicId))
-          : []                                                     // discussion doesn't have 'view', so return empty array
-        return {
-          topicTitle,
-          topicMessage,
-          id: topicId,
-          authorId: author.id || '',
-          timestamp,
-          replies                                                  // replies to discussion are stored in an array
-        }
-      }))
+      ])
+        // array destructure result of the two API calls
+        .then(([discussion, topic]) => {
+          const topicTitle = topic.title
+          const topicMessage = topic.message
+          const author = topic.author
+          const timestamp = topic.created_at
+          const topicId = topic.id
+          // if discussion 'view' array has any element, then there are replies to this discussion
+          const replies = discussion.view.length > 0
+            ? discussion.view
+              // remove deleted posts as they contain no data
+              .filter(x => !x.deleted)
+              .map(reply => getNestedReplies(reply, topicId))
+            // discussion doesn't have 'view', so return empty array
+            : []
+          return {
+            topicTitle,
+            topicMessage,
+            id: topicId,
+            authorId: author.id || '',
+            timestamp,
+            replies
+          }
+        }))
   )
 }
 
-getDiscussions(/* */)                                              // add course ID here!
-  .then(discussions => writeToCSV(discussions))                    // write result to CSV
+// add course ID here!
+getDiscussions(46341)
+  // write result to CSV
+  .then(discussions => writeToCSV(discussions))
