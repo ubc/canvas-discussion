@@ -24,7 +24,9 @@ These instructions will get you a copy of the project up and running on your loc
 1. Then cd into the repo. `cd canvas-discussion`
 1. Run the installation script. `npm install` (If you see `babel-node: command not found`, you've missed this step.)
 1. Generate Canvas API token and copy it to clipboard.
-1. Rename the `sample.env` file to `.env`, and add your API token to `CANVAS_API_TOKEN=`.
+1. Create a `.env` file.
+1. Generate Canvas API token and copy it to clipboard.
+1. Add the following: `CANVAS_API_TOKEN={YOUR API TOKEN}` and `CANVAS_API_DOMAIN={YOUR API DOMAIN}`. An example `CANVAS_API_DOMAIN` is `https://{school}.instructure.com/api/v1`
 1. Add your course ID to `index.js`, where it says: `getDiscussions(/* add Canvas course id here */)`
 1. Run the script. `npm start`.
 1. An `output.csv` file should be generated with discussion data.
