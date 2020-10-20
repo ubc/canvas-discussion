@@ -59,9 +59,9 @@ const getDiscussions = async courseId => {
   })
 }
 
-// add course ID here!
+
 Promise.all([
-  50443
+  //{course id} add course ID here!
 ].map(courseId => getDiscussions(courseId)
   .then(discussions => writeToCSV(courseId, discussions))
 ))
