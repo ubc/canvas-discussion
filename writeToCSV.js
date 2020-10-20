@@ -8,11 +8,12 @@ const append = (pathToFile, row) => fsappend(pathToFile, row + '\r\n')
 
 const escapeComment = comment => comment ? '"' + comment.replace(/"/g, "'") + '"' : ''
 
-const writeToCSV = data => {
-  const csv = path.join(__dirname, 'output.csv')
+const writeToCSV = (courseId, data) => {
+  const csv = path.join(__dirname, `output/${courseId}-discussion.csv`)
 
   const header = [
     'author_id',
+    'author_name',
     'post_id',
     'post_parent_id',
     'discussion_topic_title',
@@ -27,6 +28,7 @@ const writeToCSV = data => {
   data.forEach(discussion => {
     append(csv, [                                 // write discussion to CSV
       discussion.authorId,
+      discussion.authorName,
       discussion.id,
       '',                                         // discussion topics cannot have a parent ID
       escapeComment(discussion.topicTitle),
@@ -40,6 +42,7 @@ const writeToCSV = data => {
       reply.forEach(response => {
         append(csv, [                              // write replies to CSV
           response.authorId,
+          response.authorName,
           response.id,
           response.parentId,
           escapeComment(discussion.topicTitle),

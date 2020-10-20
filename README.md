@@ -1,6 +1,6 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 # Canvas Discussion
-This project pulls via the Canvas API the discussions from the specified Canvas course and exports it as CSV. The columns exported are: 
+This project pulls via the Canvas API the discussions from the specified Canvas course and exports it as CSV. The columns exported are:
 * 'author_id',
 * 'post_id',
 * 'post_parent_id',
@@ -20,7 +20,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installation and execution of script
 
-1. Clone this repo. `git clone https://github.com/justin0022/canvas-discussion.git`
+1. Clone this repo. `git clone https://github.com/ubccapico/canvas-discussion.git`
 1. Then cd into the repo. `cd canvas-discussion`
 1. Run the installation script. `npm install` (If you see `babel-node: command not found`, you've missed this step.)
 1. Generate Canvas API token and copy it to clipboard.

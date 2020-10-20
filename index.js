@@ -6,13 +6,18 @@ const getDiscussionTopicIds = courseId => capi.getDiscussionTopics(courseId)
   .then(discussions => discussions.map(x => x.id))
 
 // recursively get nested replies and flatten result
-const getNestedReplies = (replyObj, topicId) => {
+const getNestedReplies = (replyObj, participants, topicId) => {
   const replies = replyObj.hasOwnProperty('replies')
     ? flatten(
-      replyObj.replies.map(replyObj => getNestedReplies(replyObj))
+      replyObj.replies.map(replyObj => getNestedReplies(replyObj, participants))
     ) : []
+  const authorName = participants.find(x => x.id === replyObj.user_id)
+    ? participants.find(x => x.id === replyObj.user_id).display_name
+    : ''
+
   return [{
     authorId: replyObj.user_id,
+    authorName: authorName,
     message: replyObj.message,
     likes: replyObj.rating_sum,
     timestamp: replyObj.created_at,
@@ -36,16 +41,18 @@ const getDiscussions = async courseId => {
     const author = topic.author
     const timestamp = topic.created_at
     const topicId = topic.id
+    const participants = discussion.participants
     const replies = discussion.view.length > 0
       ? discussion.view
         .filter(x => !x.deleted)
-        .map(reply => getNestedReplies(reply, topicId))
+        .map(reply => getNestedReplies(reply, participants, topicId))
       : []
     return {
       topicTitle,
       topicMessage,
       id: topicId,
       authorId: author.id || '',
+      authorName: author.display_name || '',
       timestamp,
       replies
     }
@@ -53,6 +60,8 @@ const getDiscussions = async courseId => {
 }
 
 // add course ID here!
-getDiscussions()
-  // write result to CSV
-  .then(discussions => writeToCSV(discussions))
+Promise.all([
+  50443
+].map(courseId => getDiscussions(courseId)
+  .then(discussions => writeToCSV(courseId, discussions))
+))
