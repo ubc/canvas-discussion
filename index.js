@@ -59,9 +59,28 @@ const getDiscussions = async courseId => {
   })
 }
 
-
-Promise.all([
-  //{course id} add course ID here!
-].map(courseId => getDiscussions(courseId)
-  .then(discussions => writeToCSV(courseId, discussions))
-))
+Promise.all(
+  [
+    50827
+  ].map(async courseId => {
+    const [discussions, enrollments] = await Promise.all([getDiscussions(courseId), capi.getUsersInCourse(courseId)])
+    const discussionWithSisId = discussions.map(discussion => {
+      const author = enrollments.find(e => e.id === discussion.authorId)
+      if (author) {
+        discussion.sis_id = author.sis_user_id
+      }
+      const repliesWithSisId = discussion.replies.map(reply => {
+        return reply.map(response => {
+          const author = enrollments.find(e => e.id === response.authorId)
+          if (author) {
+            response.sis_id = author.sis_user_id
+          }
+          return response
+        })
+      })
+      discussion.replies = repliesWithSisId
+      return discussion
+    })
+    writeToCSV(courseId, discussionWithSisId)
+  })
+)
