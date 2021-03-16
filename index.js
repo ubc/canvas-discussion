@@ -68,7 +68,7 @@ const getGroupDiscussions = async groupId => {
     discussionTopicIds
       .map(topicId => Promise.all([
         capi.getFullGroupDiscussion(groupId, topicId),
-        capi.getGroupDiscussionTopics(groupId, topicId)
+        capi.getGroupDiscussionTopic(groupId, topicId)
       ]))
   )
   return discussionAndTopic.map(([discussion, topic]) => {
@@ -87,21 +87,31 @@ const getGroupDiscussions = async groupId => {
       topicTitle,
       topicMessage,
       id: topicId,
-      authorId: author.id || '',
-      authorName: author.display_name || '',
+      authorId: author ? author.id : '',
+      authorName: author ? author.display_name : '',
       timestamp,
       replies
     }
   })
 }
 
-// Promise.all([
-//   59748
-// ].map(courseId => getDiscussions(courseId)
-//   .then(discussions => writeToCSV(courseId, discussions))
-// ))
+// Courses with regular discussions
 
-capi.getGroupsInCourse(59748)
+[
+  // course ids here separated by commas
+].map(courseId => getDiscussions(courseId)
+  .then(discussions => writeToCSV(courseId, discussions))
+)
+
+// Courses with group discussions
+
+[
+  // course ids here separated by commas
+].map(courseId => capi.getGroupsInCourse(courseId)
   .then(groups => groups.map(group => group.id))
-  .then(groupIds => groupIds.map(groupId => getGroupDiscussions(groupId).then(x => console.log(x))))
+  .then(groupIds => groupIds.map(groupId => getGroupDiscussions(groupId)
+    .then(discussions => writeToCSV(groupId, discussions))
+  ))
+)
+
   // .then(x => console.log(x))
