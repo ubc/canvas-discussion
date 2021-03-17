@@ -97,21 +97,19 @@ const getGroupDiscussions = async groupId => {
 
 // Courses with regular discussions
 
-[
-  // course ids here separated by commas
-].map(courseId => getDiscussions(courseId)
-  .then(discussions => writeToCSV(courseId, discussions))
-)
+// [
+//   // course ids here separated by commas
+// ].map(courseId => getDiscussions(courseId)
+//   .then(discussions => writeToCSV(courseId, discussions))
+// )
 
 // Courses with group discussions
 
 [
-  // course ids here separated by commas
+  59748 // course ids here separated by commas
 ].map(courseId => capi.getGroupsInCourse(courseId)
   .then(groups => groups.map(group => group.id))
   .then(groupIds => groupIds.map(groupId => getGroupDiscussions(groupId)
     .then(discussions => writeToCSV(groupId, discussions))
   ))
 )
-
-  // .then(x => console.log(x))

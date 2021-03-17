@@ -16,7 +16,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-1. **Install [Node 10 or greater](https://nodejs.org)**.
+1. **Install [Node 15 or greater](https://nodejs.org)**.
 2. **Install [Git](https://git-scm.com/downloads)**.
 
 ### Installation and execution of script
@@ -27,7 +27,7 @@ These instructions will get you a copy of the project up and running on your loc
 1. Generate Canvas API token and copy it to clipboard.
 1. Create a `.env` file.
 2. Add the following: `CANVAS_API_TOKEN={YOUR API TOKEN}` and `CANVAS_API_DOMAIN={YOUR API DOMAIN}`. An example `CANVAS_API_DOMAIN` is `https://{school}.instructure.com/api/v1`
-3. Add your course ID to `index.js`, where it says: `//{course id} add course ID here!` 
+3. Add your course ID to `index.js`, where it says: `//{course id} add course ID here!`
 4. Run the script. `npm start`.
 5. An `output.csv` file should be generated with discussion data in the output folder.
 

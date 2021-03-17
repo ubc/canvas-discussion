@@ -8,6 +8,8 @@ const append = (pathToFile, row) => fsappend(pathToFile, row + '\r\n')
 
 const escapeComment = comment => comment ? '"' + comment.replace(/"/g, "'") + '"' : ''
 
+const stripHTML = comment => comment ? comment.replace(/(<([^>]+)>)/gi, "").replaceAll('&nbsp;', " ") : ''
+
 const writeToCSV = (courseId, data) => {
   const csv = path.join(__dirname, `output/${courseId}-discussion.csv`)
 
@@ -31,8 +33,8 @@ const writeToCSV = (courseId, data) => {
       discussion.authorName,
       discussion.id,
       '',                                         // discussion topics cannot have a parent ID
-      escapeComment(discussion.topicTitle),
-      escapeComment(discussion.topicMessage),
+      stripHTML(escapeComment(discussion.topicTitle)),
+      stripHTML(escapeComment(discussion.topicMessage)),
       '',
       '',
       discussion.timestamp
@@ -45,9 +47,9 @@ const writeToCSV = (courseId, data) => {
           response.authorName,
           response.id,
           response.parentId,
-          escapeComment(discussion.topicTitle),
-          escapeComment(discussion.topicMessage),
-          escapeComment(response.message),
+          stripHTML(escapeComment(discussion.topicTitle)),
+          stripHTML(escapeComment(discussion.topicMessage)),
+          stripHTML(escapeComment(response.message)),
           response.likes,
           response.timestamp
         ])
