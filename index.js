@@ -106,7 +106,7 @@ const getGroupDiscussions = async groupId => {
 // Courses with group discussions
 
 [
-  59748 // course ids here separated by commas
+ // course ids here separated by commas
 ].map(courseId => capi.getGroupsInCourse(courseId)
   .then(groups => groups.map(group => group.id))
   .then(groupIds => groupIds.map(groupId => getGroupDiscussions(groupId)
