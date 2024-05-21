@@ -1,15 +1,21 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 # Canvas Discussion
 This project pulls via the Canvas API the discussions from the specified Canvas course and exports it as CSV. The columns exported are:
-* 'author_id',
-* 'author_name',
+* 'topic_id',
+* 'topic_title',
+* 'topic_message',
+* 'topic_author_id',
+* 'topic_author_name',
+* 'topic_timestamp',
+* 'post_author_id',
+* 'post_author_name',
 * 'post_id',
 * 'post_parent_id',
-* 'discussion_topic_title',
-* 'discussion_topic_message',
 * 'post_message',
-* 'count_of_likes',
-* 'timestamp'
+* 'post_likes',
+* 'post_timestamp'
+
+Where a `topic` corresponds to a `discussion_topic` and `post` refers to replies to the `discussion_topic`. If a `discussion_topic` has no posts then you will see the `topic_` columns filled with no corresponding `post_` data. A `post` may have a `post_parent_id ` if it is part of a threaded response.
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for use with your own API tokens and Canvas domains.
