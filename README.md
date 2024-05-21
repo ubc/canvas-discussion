@@ -32,25 +32,13 @@ These instructions will get you a copy of the project up and running on your loc
 1. Run the installation script. `npm install` (If you see `babel-node: command not found`, you've missed this step.)
 1. Generate Canvas API token and copy it to clipboard.
 1. Create a `.env` file.
-1. Add the following: `CANVAS_API_TOKEN={YOUR API TOKEN}` and `CANVAS_API_DOMAIN={YOUR API DOMAIN}`. An example `CANVAS_API_DOMAIN` is `https://{school}.instructure.com/api/v1`
-1. Add your course ID to `index.js`, where it says: `//{course id} add course ID here!` For example, if my course_id was 1001, The last lines of `index.js` should change from
+1. Add the following: `CANVAS_API_TOKEN={YOUR API TOKEN}`, `CANVAS_API_DOMAIN={YOUR API DOMAIN}`, `COURSE_IDS={YOUR COURSE ID(s)}`. At UBC the `CANVAS_API_DOMAIN` is `https://{school}.instructure.com/api/v1`
 
+Your .env file should look like
 ```
-Promise.all([
-  /*enter course ids here*/
-].map(courseId => getDiscussions(courseId)
-  .then(discussions => writeToCSV(courseId, discussions))
-))
-```
-
-to
-
-```
-Promise.all([
-  1001
-].map(courseId => getDiscussions(courseId)
-  .then(discussions => writeToCSV(courseId, discussions))
-))
+CANVAS_API_TOKEN=22322...
+CANVAS_API_DOMAIN=https://{school}.instructure.com/api/v1
+COURSE_IDS=1111,1112
 ```
 1. Run the script. `npm start`.
 1. A `{course_id}-discussion.csv` file should be generated with discussion data in the output folder for each provided course_id.

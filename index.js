@@ -1,6 +1,13 @@
 const capi = require('node-canvas-api')
 const { flatten } = require('./util')
 const writeToCSV = require('./writeToCSV')
+require('dotenv').config();
+
+// Check for COURSE_IDS in environment variables
+if (!process.env.COURSE_IDS) {
+  console.error('Error: COURSE_IDS environment variable is not defined.');
+  process.exit(1); // Exit the script with a non-zero status
+}
 
 const getDiscussionTopicIds = courseId => capi.getDiscussionTopics(courseId)
   .then(discussions => discussions.map(x => x.id))
@@ -60,9 +67,10 @@ const getDiscussions = async courseId => {
   })
 }
 
+const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim());
 
-Promise.all([
-  /*enter course ids here*/
-].map(courseId => getDiscussions(courseId)
-  .then(discussions => writeToCSV(courseId, discussions))
-))
+Promise.all(
+  courseIds.map(courseId => getDiscussions(courseId)
+    .then(discussions => writeToCSV(courseId, discussions))
+  )
+).catch(error => console.error('Error processing discussions:', error));
