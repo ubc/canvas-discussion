@@ -47,7 +47,7 @@ const getDiscussions = async courseId => {
         .filter(x => !x.deleted)
         .map(reply => getNestedReplies(reply, participants, topicId))
       : []
-    
+
     return {
       topicId,
       topicTitle,
