@@ -20,13 +20,13 @@ const writeToCSV = (courseId, data) => {
     'topic_author_id',
     'topic_author_name',
     'topic_timestamp',
-    'reply_author_id',
-    'reply_author_name',
-    'reply_id',
-    'reply_parent_id',
-    'reply_message',
-    'reply_likes',
-    'reply_timestamp'
+    'post_author_id',
+    'post_author_name',
+    'post_id',
+    'post_parent_id',
+    'post_message',
+    'post_likes',
+    'post_timestamp'
   ];
 
   writeHeader(csv, header);
@@ -42,7 +42,7 @@ const writeToCSV = (courseId, data) => {
     ];
 
     if (Array.isArray(discussion.replies) && discussion.replies.length > 0) {
-      discussion.replies.flat().forEach(reply => {
+      discussion.replies.flat().forEach(post => {
         append(csv, [
           discussion.topicId,
           stripHTML(escapeComment(discussion.topicTitle)),
@@ -50,13 +50,13 @@ const writeToCSV = (courseId, data) => {
           discussion.topicAuthorId,
           escapeComment(discussion.topicAuthorName),
           discussion.topicCreatedAt,
-          reply.postAuthorId,
-          escapeComment(reply.postAuthorName),
-          reply.postId,
-          reply.postParentId,
-          stripHTML(escapeComment(reply.postMessage)),
-          reply.postLikes,
-          reply.postTimestamp
+          post.postAuthorId,
+          escapeComment(post.postAuthorName),
+          post.postId,
+          post.postParentId,
+          stripHTML(escapeComment(post.postMessage)),
+          post.postLikes,
+          post.postTimestamp
         ]);
       });
     } else {
