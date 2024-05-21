@@ -16,13 +16,13 @@ const getNestedReplies = (replyObj, participants, topicId) => {
     : ''
 
   return [{
-    authorId: replyObj.user_id,
-    authorName: authorName,
-    message: replyObj.message,
-    likes: replyObj.rating_sum,
-    timestamp: replyObj.created_at,
-    parentId: replyObj.parent_id || topicId,
-    id: replyObj.id
+    postAuthorId: replyObj.user_id,
+    postAuthorName: authorName,
+    postMessage: replyObj.message,
+    postLikes: replyObj.rating_sum || 0,
+    postTimestamp: replyObj.created_at,
+    postParentId: replyObj.parent_id || '',
+    postId: replyObj.id
   }, ...replies]
 }
 
@@ -36,24 +36,25 @@ const getDiscussions = async courseId => {
       ]))
   )
   return discussionAndTopic.map(([discussion, topic]) => {
+    const topicId = topic.id
     const topicTitle = topic.title
     const topicMessage = topic.message
     const author = topic.author
-    const timestamp = topic.created_at
-    const topicId = topic.id
+    const topicCreatedAt = topic.created_at
     const participants = discussion.participants
     const replies = discussion.view.length > 0
       ? discussion.view
         .filter(x => !x.deleted)
         .map(reply => getNestedReplies(reply, participants, topicId))
       : []
+    
     return {
+      topicId,
       topicTitle,
       topicMessage,
-      id: topicId,
-      authorId: author.id || '',
-      authorName: author.display_name || '',
-      timestamp,
+      topicAuthorId: author.id || '',
+      topicAuthorName: author.display_name || '',
+      topicCreatedAt,
       replies
     }
   })
@@ -61,7 +62,7 @@ const getDiscussions = async courseId => {
 
 
 Promise.all([
-  //{course id} add course ID here!
+  138649
 ].map(courseId => getDiscussions(courseId)
   .then(discussions => writeToCSV(courseId, discussions))
 ))
