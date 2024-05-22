@@ -70,7 +70,11 @@ const getDiscussions = async courseId => {
 const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim());
 
 Promise.all(
-  courseIds.map(courseId => getDiscussions(courseId)
-    .then(discussions => writeToCSV(courseId, discussions))
+  courseIds.map(courseId =>
+    getDiscussions(courseId)
+      .then(discussions => writeToCSV(courseId, discussions))
   )
-).catch(error => console.error('Error processing discussions:', error));
+).catch(error => {
+  const detailedErrorMessage = error.message || `An unexpected error occurred: ${error}`
+  console.error('Error processing discussions:', detailedErrorMessage)
+});
