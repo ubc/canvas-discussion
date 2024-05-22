@@ -16,6 +16,10 @@ This project pulls via the Canvas API the discussions from the specified Canvas 
 * 'post_timestamp'
 
 Where a `topic` corresponds to a `discussion_topic` and `post` refers to replies to the `discussion_topic`. If a `discussion_topic` has no posts then you will see the `topic_` columns filled with no corresponding `post_` data. A `post` may have a `post_parent_id ` if it is part of a threaded response.
+* 'post_likes',
+* 'post_timestamp'
+
+Where a `topic` corresponds to a `discussion_topic` and `post` refers to replies to the `discussion_topic`. If a `discussion_topic` has no posts then you will see the `topic_` columns filled with no corresponding `post_` data. A `post` may have a `post_parent_id ` if it is part of a threaded response.
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for use with your own API tokens and Canvas domains.
@@ -24,13 +28,16 @@ These instructions will get you a copy of the project up and running on your loc
 
 1. **Install [Node 10 or greater](https://nodejs.org)**.
 1. **Install [Git](https://git-scm.com/downloads)**.
+1. **Install [Git](https://git-scm.com/downloads)**.
 
 ### Installation and execution of script
 
 1. Clone this repo. `git clone https://github.com/ubccapico/canvas-discussion.git`
 1. Then cd into the repo. `cd canvas-discussion`
 1. Run the installation script. `npm install` (If you see `babel-node: command not found`, you've missed this step.)
-1. Generate Canvas API token and copy it to clipboard.
+1. Generate Canvas API token and copy it to clipboard
+    > - See [Get Started with the Canvas API](https://learninganalytics.ubc.ca/guides/get-started-with-the-canvas-api/) for more information.
+    > - ⚠️ Your Canvas API token is the equivalent to your username and password and must be treated as such (following any security guidelines of your home institution).
 1. Create a `.env` file.
 1. Add the following: `CANVAS_API_TOKEN={YOUR API TOKEN}`, `CANVAS_API_DOMAIN={YOUR API DOMAIN}`, `COURSE_IDS={YOUR COURSE ID(s)}`. At UBC the `CANVAS_API_DOMAIN` is `https://{school}.instructure.com/api/v1`
 
