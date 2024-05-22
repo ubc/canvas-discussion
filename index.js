@@ -8,13 +8,6 @@ if (!process.env.COURSE_IDS) {
   console.error('Error: COURSE_IDS environment variable is not defined.');
   process.exit(1); // Exit the script with a non-zero status
 }
-require('dotenv').config();
-
-// Check for COURSE_IDS in environment variables
-if (!process.env.COURSE_IDS) {
-  console.error('Error: COURSE_IDS environment variable is not defined.');
-  process.exit(1); // Exit the script with a non-zero status
-}
 
 const getDiscussionTopicIds = courseId => capi.getDiscussionTopics(courseId)
   .then(discussions => discussions.map(x => x.id))
@@ -37,13 +30,6 @@ const getNestedReplies = (replyObj, participants, topicId) => {
     postTimestamp: replyObj.created_at,
     postParentId: replyObj.parent_id || '',
     postId: replyObj.id
-    postAuthorId: replyObj.user_id,
-    postAuthorName: authorName,
-    postMessage: replyObj.message,
-    postLikes: replyObj.rating_sum || 0,
-    postTimestamp: replyObj.created_at,
-    postParentId: replyObj.parent_id || '',
-    postId: replyObj.id
   }, ...replies]
 }
 
@@ -58,11 +44,9 @@ const getDiscussions = async courseId => {
   )
   return discussionAndTopic.map(([discussion, topic]) => {
     const topicId = topic.id
-    const topicId = topic.id
     const topicTitle = topic.title
     const topicMessage = topic.message
     const author = topic.author
-    const topicCreatedAt = topic.created_at
     const topicCreatedAt = topic.created_at
     const participants = discussion.participants
     const replies = discussion.view.length > 0
@@ -74,12 +58,8 @@ const getDiscussions = async courseId => {
 
     return {
       topicId,
-      topicId,
       topicTitle,
       topicMessage,
-      topicAuthorId: author.id || '',
-      topicAuthorName: author.display_name || '',
-      topicCreatedAt,
       topicAuthorId: author.id || '',
       topicAuthorName: author.display_name || '',
       topicCreatedAt,
@@ -88,7 +68,6 @@ const getDiscussions = async courseId => {
   })
 }
 
-const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim());
 const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim());
 
 Promise.all(
