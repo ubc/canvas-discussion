@@ -12,14 +12,11 @@ const flattenReplies = discussions => {
 
 const getTotalReplyLikes = discussion => {
     const totalLikes = discussion.replies.reduce((acc, reply) => acc + reply.postLikes, 0);
-    // Return the total likes count
-    console.log('Total Likes: ', totalLikes)
     return totalLikes;
   };
 
 const getTotalReplies = discussion => {
     const totalReplies = discussion.replies.length || 0
-    console.log('Total replies: ', totalReplies)
     return totalReplies
 }
 
@@ -31,8 +28,11 @@ Promise.all(
           // Map over discussions and add computed properties
           return discussions.map(discussion => ({
             ...discussion,
-            totalReplyLikes: getTotalReplyLikes(discussion),
-            totalReplies: getTotalReplies(discussion)
+            stats: {
+                totalReplyLikes: getTotalReplyLikes(discussion),
+                totalReplies: getTotalReplies(discussion)
+            }
+
           }));
         })
     )
@@ -40,7 +40,7 @@ Promise.all(
   .then(allCoursesDiscussions => {
     // allCoursesDiscussions contains an array of discussions for each course
     // You can now use these discussions for further processing
-    console.log(allCoursesDiscussions);
+    console.log(JSON.stringify(allCoursesDiscussions, null, 2));
   })
   .catch(error => {
     const detailedErrorMessage = error.message || 'An unexpected error occurred';
