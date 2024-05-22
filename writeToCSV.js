@@ -2,13 +2,11 @@ const fs = require('fs')
 const path = require('path')
 const fswrite = fs.writeFileSync
 const fsappend = fs.appendFileSync
+const {  escapeComment, stripHTML}  = require('./util')
 
 const writeHeader = (pathToFile, header) => fswrite(pathToFile, header + '\r\n')
 const append = (pathToFile, row) => fsappend(pathToFile, row + '\r\n')
 
-const escapeComment = comment => comment ? '"' + comment.replace(/"/g, "'") + '"' : ''
-
-const stripHTML = comment => comment ? comment.replace(/(<([^>]+)>)/gi, "").replaceAll('&nbsp;', " ") : ''
 
 const writeToCSV = (courseId, data) => {
   const csv = path.join(__dirname, `output/${courseId}-discussion.csv`);

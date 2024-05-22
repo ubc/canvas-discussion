@@ -4,6 +4,12 @@ const flatten = arr => arr.reduce((acc, cur) =>
     : [...acc, cur]
 , [])
 
+const escapeComment = comment => comment ? '"' + comment.replace(/"/g, "'") + '"' : ''
+
+const stripHTML = comment => comment ? comment.replace(/(<([^>]+)>)/gi, "").replaceAll('&nbsp;', " ") : ''
+
 module.exports = {
-  flatten
+  flatten,
+  escapeComment,
+  stripHTML
 }
