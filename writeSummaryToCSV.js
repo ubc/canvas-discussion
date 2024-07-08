@@ -12,7 +12,7 @@ const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',
 // Function to calculate the topic summary
 const topicSummary = (topic) => {
   const posts = topic.replies.flat()
-  const topicPostedAt = new Date(topic.topicPostedAt)
+  const topicCreatedAt = new Date(topic.topicCreatedAt)
 
   // Number of posts
   const numberOfPosts = posts.length

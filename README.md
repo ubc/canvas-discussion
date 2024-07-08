@@ -22,7 +22,7 @@ This project pulls data via the Canvas API the discussions for the specified Can
 * 'post_likes',
 * 'post_timestamp'
 
-Where a `topic` corresponds to a `discussion_topic` and `post` refers to replies to the `discussion_topic`. If a `discussion_topic` has no posts then you will see the `topic_` columns filled with no corresponding `post_` data. A `post` may have a `post_parent_id ` if it is part of a threaded response.
+Where a `topic` corresponds to a `discussion_topic` and `post` refers to all replies to the `discussion_topic`. If a `discussion_topic` has no posts then you will see the `topic_` columns filled with no corresponding `post_` data. A `post` may have a `post_parent_id ` if it is part of a threaded response.
 
 ### Summary Data
 > `{course_id}-discussion-summary.csv`
@@ -38,10 +38,12 @@ We have calculated summary metrics for each topic. The csv with the summary info
 * 'median_posts_word_count': the median word count for all posts and replies to the topic
 * 'average_time_to_post_hours': the average time to post or reply from the topic created_at date
 * 'first_reply_timestamp': the timestamp of the first post
-* 'average_time_to_post_from_first_reply_hours': the averate time to post or reply from the first post (for cases where all discussions are released at once, this may be a more meaningful mettric of time to reply)
+* 'average_time_to_post_from_first_reply_hours': the average time to post or reply from the first post (for cases where all discussions are released at once, this may be a more meaningful metric of time to reply)
 * 'average_posts_per_author': the average posts per author (does not include enrollments with no posts)
 
 Where a `post` is a response to a topic, and a `reply` is a reply to the post. 
+
+![alt text](image-1.png)
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for use with your own API tokens and Canvas domains.
