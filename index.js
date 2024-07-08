@@ -1,6 +1,7 @@
 const capi = require('node-canvas-api')
 const { flatten } = require('./util')
 const writeToCSV = require('./writeToCSV')
+const writeSummaryToCSV = require('./writeSummaryToCSV')
 require('dotenv').config();
 
 // Check for COURSE_IDS in environment variables
@@ -71,10 +72,14 @@ const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim());
 
 Promise.all(
   courseIds.map(courseId =>
-    getDiscussions(courseId)
-      .then(discussions => writeToCSV(courseId, discussions))
+    getDiscussions(courseId).then(discussions => {
+      return Promise.all([
+        writeToCSV(courseId, discussions),
+        writeSummaryToCSV(courseId, discussions)
+      ]);
+    })
   )
 ).catch(error => {
-  const detailedErrorMessage = error.message || `An unexpected error occurred: ${error}`
-  console.error('Error processing discussions:', detailedErrorMessage)
+  const detailedErrorMessage = error.message || `An unexpected error occurred: ${error}`;
+  console.error('Error processing discussions:', detailedErrorMessage);
 });

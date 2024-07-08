@@ -10,6 +10,9 @@ const writeHeader = (pathToFile, headers) => fs.writeFileSync(pathToFile, header
 const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',') + '\r\n')
 
 const writeToCSV = (courseId, data) => {
+
+  console.log(`Writing discussion data for course: ${courseId}`);
+
   const csvPath = path.join(__dirname, `output/${courseId}-discussion.csv`)
 
   const headers =[
@@ -53,10 +56,10 @@ const writeToCSV = (courseId, data) => {
           post_likes: post.postLikes,
           post_timestamp: post.postTimestamp
         };
-        appendRow(csvPath, Object.values(postDetails));
+        appendRow(csvPath, Object.values(postDetails))
       })
     } else {
-      appendRow(csvPath, Object.values(topicDetails));
+      appendRow(csvPath, Object.values(topicDetails))
     }
   })
 }
