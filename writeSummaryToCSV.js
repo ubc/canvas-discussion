@@ -22,6 +22,8 @@ const topicSummary = (topic) => {
       numberOfPosts: 0,
       medianWordCount: 0,
       averageTimeDiff: 0,
+      firstReplyTimestamp: 0,
+      averageTimeToPostFromFirst: 0,
       averagePostsPerAuthor: 0
     }
   }
@@ -46,8 +48,9 @@ const topicSummary = (topic) => {
   // Average time in hours from topicCreatedAt to postTimestamp
   const timeDiffs = posts.map(post => {
     const postTimestamp = new Date(post.postTimestamp)
-    return (postTimestamp - topicPostedAt) / (1000 * 60 * 60) // Convert from milliseconds to hours
+    return (postTimestamp - topicCreatedAt) / (1000 * 60 * 60) // Convert from milliseconds to hours
   })
+
   const averageTimeDiff = Math.round((timeDiffs.reduce((acc, curr) => acc + curr, 0) / timeDiffs.length) * 10) / 10
 
   // Average number of posts per postAuthorId
@@ -57,10 +60,27 @@ const topicSummary = (topic) => {
   }, {})
   const averagePostsPerAuthor = Math.round((Object.values(postCountsByAuthor).reduce((acc, curr) => acc + curr, 0) / Object.keys(postCountsByAuthor).length) * 10) / 10
 
+  
+  const firstReplyTimestamp = new Date(Math.min(...posts.map(post => new Date(post.postTimestamp))))
+  const timeDiffsFromFirst = posts
+    .map(post => {
+      const postTimestamp = new Date(post.postTimestamp)
+      return postTimestamp > firstReplyTimestamp 
+        ? (postTimestamp - firstReplyTimestamp) / (1000 * 60 * 60) // Convert from milliseconds to hours
+        : null
+    })
+    .filter(diff => diff !== null)
+  
+  const averageTimeToPostFromFirst = timeDiffsFromFirst.length > 0
+    ? Math.round((timeDiffsFromFirst.reduce((acc, curr) => acc + curr, 0) / timeDiffsFromFirst.length) * 10) / 10
+    : 0
+    
   return {
     numberOfPosts,
     medianWordCount,
     averageTimeDiff,
+    firstReplyTimestamp,
+    averageTimeToPostFromFirst,
     averagePostsPerAuthor
   }
 }
@@ -82,6 +102,8 @@ const writeSummaryToCSV = (courseId, data) => {
     'number_of_posts',
     'median_posts_word_count',
     'average_time_to_post_hours',
+    'first_reply_timestamp',
+    'average_time_to_post_from_first_reply_hours',
     'average_posts_per_author'
   ]
 
@@ -102,9 +124,10 @@ const writeSummaryToCSV = (courseId, data) => {
       number_of_posts: summary.numberOfPosts,
       median_posts_word_count: summary.medianWordCount,
       average_time_to_post_hours: summary.averageTimeDiff,
+      first_reply_timestamp: summary.firstReplyTimestamp,
+      average_time_to_post_from_first_reply_hours: summary.averageTimeToPostFromFirst,
       average_posts_per_author: summary.averagePostsPerAuthor
     }
-
     appendRow(csvPath, Object.values(topicDetails))
   })
 }
