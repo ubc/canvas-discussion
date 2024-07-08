@@ -21,7 +21,8 @@ const writeToCSV = (courseId, data) => {
     'topic_message', 
     'topic_author_id',
     'topic_author_name', 
-    'topic_timestamp', 
+    'topic_created_at', 
+    'topic_posted_at',
     'post_author_id',
     'post_author_name', 
     'post_id', 
@@ -41,7 +42,8 @@ const writeToCSV = (courseId, data) => {
       topic_message: stripHTML(escapeComment(discussion.topicMessage)),
       topic_author_id: discussion.topicAuthorId,
       topic_author_name: escapeComment(discussion.topicAuthorName),
-      topic_timestamp: discussion.topicCreatedAt
+      topic_created_at: discussion.topicCreatedAt,
+      topic_posted_at: discussion.topicPostedAt
     };
 
     if (Array.isArray(discussion.replies) && discussion.replies.length > 0) {

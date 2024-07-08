@@ -12,7 +12,7 @@ const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',
 // Function to calculate the topic summary
 const topicSummary = (topic) => {
   const posts = topic.replies.flat()
-  const topicCreatedAt = new Date(topic.topicCreatedAt)
+  const topicPostedAt = new Date(topic.topicPostedAt)
 
   // Number of posts
   const numberOfPosts = posts.length
@@ -46,7 +46,7 @@ const topicSummary = (topic) => {
   // Average time in hours from topicCreatedAt to postTimestamp
   const timeDiffs = posts.map(post => {
     const postTimestamp = new Date(post.postTimestamp)
-    return (postTimestamp - topicCreatedAt) / (1000 * 60 * 60) // Convert from milliseconds to hours
+    return (postTimestamp - topicPostedAt) / (1000 * 60 * 60) // Convert from milliseconds to hours
   })
   const averageTimeDiff = Math.round((timeDiffs.reduce((acc, curr) => acc + curr, 0) / timeDiffs.length) * 10) / 10
 
@@ -77,7 +77,8 @@ const writeSummaryToCSV = (courseId, data) => {
     //'topic_message',
     'topic_author_id',
     'topic_author_name',
-    'topic_timestamp',
+    'topic_created_at', 
+    'topic_posted_at',
     'number_of_posts',
     'median_posts_word_count',
     'average_time_to_post_hours',
@@ -96,7 +97,8 @@ const writeSummaryToCSV = (courseId, data) => {
       //topic_message: stripHTML(escapeComment(discussion.topicMessage)),
       topic_author_id: discussion.topicAuthorId,
       topic_author_name: escapeComment(discussion.topicAuthorName),
-      topic_timestamp: discussion.topicCreatedAt,
+      topic_created_at: discussion.topicCreatedAt,
+      topic_posted_at: discussion.topicPostedAt,
       number_of_posts: summary.numberOfPosts,
       median_posts_word_count: summary.medianWordCount,
       average_time_to_post_hours: summary.averageTimeDiff,
