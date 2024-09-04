@@ -114,18 +114,28 @@ const getDiscussions = async courseId => {
 // }
 
 
-
 const getPublishedModuleDiscussions = async courseId => {
   
   const modules = await capi.getModules(courseId)
 
   const modulesWithDiscussionItems = await Promise.all(modules.map(async module => {
     const items = await capi.getModuleItems(courseId, module.id)
-    const dicussionItems = items.filter(item => item.type === "Discussion" && item.published===true).flat()
-    
+    const discussionItems = items.filter(item => item.type === "Discussion" && item.published===true).flat()
+
+    const discussionsAndTopics = await getDiscussionsAndTopics(courseId, discussionItems.map(item => item.content_id))
+    const processedDiscussions = discussionsAndTopics.map(processDiscussionTopic)
+
+    const discussionItemWithDiscussionData = discussionItems.map(discussionItem => {
+      const discussionAndReplies = processedDiscussions.find(d => d.topicId === discussionItem.content_id)
+      return {
+        ...discussionItem,
+        discussionAndReplies
+      }
+    })
+
     return {
       ...module,
-      discussionItems: dicussionItems
+      discussionItems: discussionItemWithDiscussionData
     }
   }))
 
@@ -135,11 +145,10 @@ const getPublishedModuleDiscussions = async courseId => {
 
 }
 
-// console.log(courseIds.map(courseId =>
-//   (getPublishedModuleDiscussions(courseId))))
-
 
 const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim());
+console.log(courseIds.map(courseId =>
+  (getPublishedModuleDiscussions(courseId))))
 
 Promise.all(
   courseIds.map(courseId =>
