@@ -1,13 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+const path = require('path')
 
-const escapeComment = comment => comment ? '"' + comment.replace(/"/g, "'") + '"' : ''
-
-const stripHTML = comment => comment ? comment.replace(/(<([^>]+)>)/gi, "").replace(/&nbsp;/g, " ") : ''
-
-const writeHeader = (pathToFile, headers) => fs.writeFileSync(pathToFile, headers.join(',') + '\r\n')
-
-const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',') + '\r\n')
+const { escapeComment, stripHTML, writeHeader, appendRow } = require('./util') // Adjust the path as necessary
 
 const writeToCSV = (courseId, data) => {
 

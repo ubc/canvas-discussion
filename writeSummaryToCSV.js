@@ -1,13 +1,7 @@
-const fs = require('fs')
 const path = require('path')
+const { escapeComment, stripHTML, writeHeader, appendRow, 
+  getWordCount, median } = require('./util') // Adjust the path as necessary
 
-const escapeComment = comment => comment ? '"' + comment.replace(/"/g, "'") + '"' : ''
-
-const stripHTML = comment => comment ? comment.replace(/(<([^>]+)>)/gi, "").replace(/&nbsp;/g, " ") : ''
-
-const writeHeader = (pathToFile, headers) => fs.writeFileSync(pathToFile, headers.join(',') + '\r\n')
-
-const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',') + '\r\n')
 
 // Function to calculate the topic summary
 const topicSummary = (topic) => {
@@ -29,20 +23,20 @@ const topicSummary = (topic) => {
   }
 
   // Word count function
-  const getWordCount = (str) => {
-    const cleanStr = str.replace(/<\/?[^>]+(>|$)/g, "") // Remove HTML tags
-    return cleanStr.trim().split(/\s+/).length
-  }
+  // const getWordCount = (str) => {
+  //   const cleanStr = str.replace(/<\/?[^>]+(>|$)/g, "") // Remove HTML tags
+  //   return cleanStr.trim().split(/\s+/).length
+  // }
 
   // Word counts
   const wordCounts = posts.map(post => getWordCount(post.postMessage))
 
-  // Median word count
-  const median = (arr) => {
-    const sorted = arr.slice().sort((a, b) => a - b)
-    const mid = Math.floor(sorted.length / 2)
-    return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
-  }
+  // // Median word count
+  // const median = (arr) => {
+  //   const sorted = arr.slice().sort((a, b) => a - b)
+  //   const mid = Math.floor(sorted.length / 2)
+  //   return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
+  // }
   const medianWordCount = Math.round(median(wordCounts) * 10) / 10
 
   // Average time in hours from topicCreatedAt to postTimestamp

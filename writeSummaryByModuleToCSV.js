@@ -1,10 +1,7 @@
-const fs = require('fs')
-const path = require('path')
 
-const escapeComment = comment => comment ? '"' + comment.replace(/"/g, "'") + '"' : ''
-const stripHTML = comment => comment ? comment.replace(/(<([^>]+)>)/gi, "").replace(/&nbsp;/g, " ") : ''
-const writeHeader = (pathToFile, headers) => fs.writeFileSync(pathToFile, headers.join(',') + '\r\n')
-const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',') + '\r\n')
+const path = require('path')
+const { escapeComment, stripHTML, writeHeader, appendRow, 
+    getWordCount, median } = require('./util')
 
 // Function to calculate the module summary
 const moduleSummary = (module) => {
@@ -15,13 +12,8 @@ const moduleSummary = (module) => {
   const moduleUnlockedAt  = new Date(module.unlock_at)
 
   const numberOfPosts = posts.length
-  const getWordCount = (str) => str.replace(/<\/?[^>]+(>|$)/g, "").trim().split(/\s+/).length
   const wordCounts = posts.map(post => getWordCount(post.postMessage))
-  const median = arr => {
-    const sorted = arr.slice().sort((a, b) => a - b)
-    const mid = Math.floor(sorted.length / 2)
-    return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
-  }
+
   const medianWordCount = median(wordCounts)
 
   const timeDiffs = posts.map(post => (new Date(post.postTimestamp) - moduleUnlockedAt) / (1000 * 60 * 60))
