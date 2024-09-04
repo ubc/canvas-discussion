@@ -34,41 +34,84 @@ const getNestedReplies = (replyObj, participants, topicId) => {
   }, ...replies]
 }
 
+const getDiscussionsAndTopics = async (courseId, topicIds) => {
+  const discussionsAndTopics = await Promise.all(
+    topicIds.map(async topicId => {
+      const discussion = await capi.getFullDiscussion(courseId, topicId)
+      const topic = await capi.getDiscussionTopic(courseId, topicId)
+      return { discussion, topic }
+    })
+  )
+  return discussionsAndTopics
+}
+
+const processDiscussionTopic = ({ discussion, topic }) => {
+  const topicId = topic.id
+  const topicTitle = topic.title
+  const topicMessage = topic.message
+  const author = topic.author
+  const topicCreatedAt = topic.created_at
+  const topicPostedAt = topic.posted_at
+  const participants = discussion.participants
+  const replies = discussion.view.length > 0
+    ? discussion.view
+      .filter(x => !x.deleted)
+      .map(reply => getNestedReplies(reply, participants, topicId))
+    : []
+
+  return {
+    topicId,
+    topicTitle,
+    topicMessage,
+    topicAuthorId: author.id || '',
+    topicAuthorName: author.display_name || '',
+    topicCreatedAt,
+    topicPostedAt,
+    replies
+  }
+}
+
 const getDiscussions = async courseId => {
   const discussionTopicIds = await getDiscussionTopicIds(courseId)
-  const discussionAndTopic = await Promise.all(
-    discussionTopicIds
-      .map(topicId => Promise.all([
-        capi.getFullDiscussion(courseId, topicId),
-        capi.getDiscussionTopic(courseId, topicId)
-      ]))
-  )
-  return discussionAndTopic.map(([discussion, topic]) => {
-    const topicId = topic.id
-    const topicTitle = topic.title
-    const topicMessage = topic.message
-    const author = topic.author
-    const topicCreatedAt = topic.created_at
-    const topicPostedAt = topic.posted_at
-    const participants = discussion.participants
-    const replies = discussion.view.length > 0
-      ? discussion.view
-        .filter(x => !x.deleted)
-        .map(reply => getNestedReplies(reply, participants, topicId))
-      : []
-
-    return {
-      topicId,
-      topicTitle,
-      topicMessage,
-      topicAuthorId: author.id || '',
-      topicAuthorName: author.display_name || '',
-      topicCreatedAt,
-      topicPostedAt,
-      replies
-    }
-  })
+  const discussionsAndTopics = await getDiscussionsAndTopics(courseId, discussionTopicIds)
+  
+  return discussionsAndTopics.map(processDiscussionTopic)
 }
+// const getDiscussions = async courseId => {
+//   const discussionTopicIds = await getDiscussionTopicIds(courseId)
+//   const discussionAndTopic = await Promise.all(
+//     discussionTopicIds
+//       .map(topicId => Promise.all([
+//         capi.getFullDiscussion(courseId, topicId),
+//         capi.getDiscussionTopic(courseId, topicId)
+//       ]))
+//   )
+//   return discussionAndTopic.map(([discussion, topic]) => {
+//     const topicId = topic.id
+//     const topicTitle = topic.title
+//     const topicMessage = topic.message
+//     const author = topic.author
+//     const topicCreatedAt = topic.created_at
+//     const topicPostedAt = topic.posted_at
+//     const participants = discussion.participants
+//     const replies = discussion.view.length > 0
+//       ? discussion.view
+//         .filter(x => !x.deleted)
+//         .map(reply => getNestedReplies(reply, participants, topicId))
+//       : []
+
+//     return {
+//       topicId,
+//       topicTitle,
+//       topicMessage,
+//       topicAuthorId: author.id || '',
+//       topicAuthorName: author.display_name || '',
+//       topicCreatedAt,
+//       topicPostedAt,
+//       replies
+//     }
+//   })
+// }
 
 
 
@@ -92,8 +135,8 @@ const getPublishedModuleDiscussions = async courseId => {
 
 }
 
-console.log(courseIds.map(courseId =>
-  (getPublishedModuleDiscussions(courseId))))
+// console.log(courseIds.map(courseId =>
+//   (getPublishedModuleDiscussions(courseId))))
 
 
 const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim());
