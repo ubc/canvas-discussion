@@ -1,43 +1,15 @@
 
 const path = require('path')
-const { escapeComment, stripHTML, writeHeader, appendRow, 
-    getWordCount, median } = require('./util')
+const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics } = require('./util') // Adjust the path as necessary
 
 // Function to calculate the module summary
 const moduleSummary = (module) => {
   const posts = module.discussionItems.map(item => item.discussionAndReplies.replies).flat().flat()
-  //console.log(JSON.stringify(module, null, 3))
-  //console.log(posts)
-  //const moduleCreatedAt = new Date(module.unlock_at || module.created_at)
   const moduleUnlockedAt  = new Date(module.unlock_at)
 
-  const numberOfPosts = posts.length
-  const wordCounts = posts.map(post => getWordCount(post.postMessage))
+  const postSummary = postStatistics(posts, moduleUnlockedAt)
 
-  const medianWordCount = median(wordCounts)
-
-  const timeDiffs = posts.map(post => (new Date(post.postTimestamp) - moduleUnlockedAt) / (1000 * 60 * 60))
-  const averageTimeDiff = timeDiffs.reduce((acc, curr) => acc + curr, 0) / timeDiffs.length
-
-  const postCountsByAuthor = posts.reduce((acc, post) => {
-    acc[post.postAuthorId] = (acc[post.postAuthorId] || 0) + 1
-    return acc
-  }, {})
-  const averagePostsPerAuthor = Object.values(postCountsByAuthor).reduce((acc, curr) => acc + curr, 0) / Object.keys(postCountsByAuthor).length
-
-  const firstReplyTimestamp = new Date(Math.min(...posts.map(post => new Date(post.postTimestamp))))
-  const timeDiffsFromFirst = posts.map(post => (new Date(post.postTimestamp) - firstReplyTimestamp) / (1000 * 60 * 60))
-
-  const averageTimeToPostFromFirst = timeDiffsFromFirst.length > 0 ? timeDiffsFromFirst.reduce((acc, curr) => acc + curr, 0) / timeDiffsFromFirst.length : 0
-  
-  return {
-    numberOfPosts,
-    medianWordCount,
-    averageTimeDiff,
-    firstReplyTimestamp,
-    averageTimeToPostFromFirst,
-    averagePostsPerAuthor
-  }
+  return postSummary
 }
 
 // Function to write the summary to CSV

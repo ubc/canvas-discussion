@@ -26,6 +26,68 @@ const median = (arr) => {
   return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
 }
 
+// Function to calculate the topic summary
+const postStatistics = (posts, useForTimestampDiff) => {
+  // Number of posts
+  const numberOfPosts = posts.length
+
+  if (numberOfPosts === 0) {
+    return {
+      numberOfPosts: 0,
+      medianWordCount: 0,
+      averageTimeDiff: 0,
+      firstReplyTimestamp: 0,
+      averageTimeToPostFromFirst: 0,
+      averagePostsPerAuthor: 0
+    }
+  }
+
+
+  // Word counts
+  const wordCounts = posts.map(post => getWordCount(post.postMessage))
+
+  const medianWordCount = Math.round(median(wordCounts) * 10) / 10
+
+  // Average time in hours from topicCreatedAt to postTimestamp
+  const timeDiffs = posts.map(post => {
+    const postTimestamp = new Date(post.postTimestamp)
+    return (postTimestamp - useForTimestampDiff) / (1000 * 60 * 60) // Convert from milliseconds to hours
+  })
+
+  const averageTimeDiff = Math.round((timeDiffs.reduce((acc, curr) => acc + curr, 0) / timeDiffs.length) * 10) / 10
+
+  // Average number of posts per postAuthorId
+  const postCountsByAuthor = posts.reduce((acc, post) => {
+    acc[post.postAuthorId] = (acc[post.postAuthorId] || 0) + 1
+    return acc
+  }, {})
+  const averagePostsPerAuthor = Math.round((Object.values(postCountsByAuthor).reduce((acc, curr) => acc + curr, 0) / Object.keys(postCountsByAuthor).length) * 10) / 10
+
+  
+  const firstReplyTimestamp = new Date(Math.min(...posts.map(post => new Date(post.postTimestamp))))
+  const timeDiffsFromFirst = posts
+    .map(post => {
+      const postTimestamp = new Date(post.postTimestamp)
+      return postTimestamp > firstReplyTimestamp 
+        ? (postTimestamp - firstReplyTimestamp) / (1000 * 60 * 60) // Convert from milliseconds to hours
+        : null
+    })
+    .filter(diff => diff !== null)
+  
+  const averageTimeToPostFromFirst = timeDiffsFromFirst.length > 0
+    ? Math.round((timeDiffsFromFirst.reduce((acc, curr) => acc + curr, 0) / timeDiffsFromFirst.length) * 10) / 10
+    : 0
+    
+  return {
+    numberOfPosts,
+    medianWordCount,
+    averageTimeDiff,
+    firstReplyTimestamp,
+    averageTimeToPostFromFirst,
+    averagePostsPerAuthor
+  }
+
+}
 module.exports = {
   flatten,
   escapeComment,
@@ -33,5 +95,6 @@ module.exports = {
   writeHeader,
   appendRow,
   getWordCount,
-  median
+  median,
+  postStatistics
 }
