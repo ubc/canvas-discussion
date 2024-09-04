@@ -14,7 +14,8 @@ const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',
 
 // Word count function
 const getWordCount = (str) => {
-  const cleanStr = str.replace(/<\/?[^>]+(>|$)/g, "") // Remove HTML tags
+  const cleanStr = stripHTML(escapeComment(str))
+  //const cleanStr = str.replace(/<\/?[^>]+(>|$)/g, "") // Remove HTML tags
   return cleanStr.trim().split(/\s+/).length
 }
 
