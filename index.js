@@ -2,6 +2,7 @@ const capi = require('node-canvas-api')
 const { flatten } = require('./util')
 const writeToCSV = require('./writeToCSV')
 const writeSummaryToCSV = require('./writeSummaryToCSV')
+const writeSummaryByModuleToCSV = require('./writeSummaryByModuleToCSV')
 require('dotenv').config();
 
 // Check for COURSE_IDS in environment variables
@@ -77,41 +78,6 @@ const getDiscussions = async courseId => {
   
   return discussionsAndTopics.map(processDiscussionTopic)
 }
-// const getDiscussions = async courseId => {
-//   const discussionTopicIds = await getDiscussionTopicIds(courseId)
-//   const discussionAndTopic = await Promise.all(
-//     discussionTopicIds
-//       .map(topicId => Promise.all([
-//         capi.getFullDiscussion(courseId, topicId),
-//         capi.getDiscussionTopic(courseId, topicId)
-//       ]))
-//   )
-//   return discussionAndTopic.map(([discussion, topic]) => {
-//     const topicId = topic.id
-//     const topicTitle = topic.title
-//     const topicMessage = topic.message
-//     const author = topic.author
-//     const topicCreatedAt = topic.created_at
-//     const topicPostedAt = topic.posted_at
-//     const participants = discussion.participants
-//     const replies = discussion.view.length > 0
-//       ? discussion.view
-//         .filter(x => !x.deleted)
-//         .map(reply => getNestedReplies(reply, participants, topicId))
-//       : []
-
-//     return {
-//       topicId,
-//       topicTitle,
-//       topicMessage,
-//       topicAuthorId: author.id || '',
-//       topicAuthorName: author.display_name || '',
-//       topicCreatedAt,
-//       topicPostedAt,
-//       replies
-//     }
-//   })
-// }
 
 
 const getPublishedModuleDiscussions = async courseId => {
@@ -139,27 +105,29 @@ const getPublishedModuleDiscussions = async courseId => {
     }
   }))
 
-  console.log(modulesWithDiscussionItems)
+  // console.log(modulesWithDiscussionItems)
 
   return modulesWithDiscussionItems
 
 }
 
-
 const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim());
-console.log(courseIds.map(courseId =>
-  (getPublishedModuleDiscussions(courseId))))
 
 Promise.all(
   courseIds.map(courseId =>
-    getDiscussions(courseId).then(discussions => {
-      return Promise.all([
-        writeToCSV(courseId, discussions),
-        writeSummaryToCSV(courseId, discussions)
-      ]);
-    })
+    Promise.all([
+      getDiscussions(courseId).then(discussions => {
+        return Promise.all([
+          writeToCSV(courseId, discussions),  // Writes detailed discussion data to CSV
+          writeSummaryToCSV(courseId, discussions)  // Writes summary of discussion data to CSV
+        ])
+      }),
+      getPublishedModuleDiscussions(courseId).then(modulesWithDiscussionItems => {
+        return writeSummaryByModuleToCSV(courseId, modulesWithDiscussionItems)  // Writes summary of module data to CSV
+      })
+    ])
   )
 ).catch(error => {
-  const detailedErrorMessage = error.message || `An unexpected error occurred: ${error}`;
-  console.error('Error processing discussions:', detailedErrorMessage);
-});
+  const detailedErrorMessage = error.message || `An unexpected error occurred: ${error}`
+  console.error('Error processing discussions and modules:', detailedErrorMessage)
+})
