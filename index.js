@@ -70,6 +70,32 @@ const getDiscussions = async courseId => {
   })
 }
 
+
+
+const getPublishedModuleDiscussions = async courseId => {
+  
+  const modules = await capi.getModules(courseId)
+
+  const modulesWithDiscussionItems = await Promise.all(modules.map(async module => {
+    const items = await capi.getModuleItems(courseId, module.id)
+    const dicussionItems = items.filter(item => item.type === "Discussion" && item.published===true).flat()
+    
+    return {
+      ...module,
+      discussionItems: dicussionItems
+    }
+  }))
+
+  console.log(modulesWithDiscussionItems)
+
+  return modulesWithDiscussionItems
+
+}
+
+console.log(courseIds.map(courseId =>
+  (getPublishedModuleDiscussions(courseId))))
+
+
 const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim());
 
 Promise.all(
