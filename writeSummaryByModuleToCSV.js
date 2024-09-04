@@ -55,7 +55,7 @@ const writeSummaryByModuleToCSV = (courseId, modules) => {
   const headers = [
     'module_id',
     'module_name',
-    'module_created_at',
+    'module_unlock_at',
     'number_of_posts',
     'median_word_count',
     'average_time_to_post_hours',

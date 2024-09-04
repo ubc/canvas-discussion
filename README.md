@@ -45,6 +45,20 @@ Where a `post` is a response to a topic, and a `reply` is a reply to the post.
 
 ![alt text](image-1.png)
 
+> `{course_id}-module-discussion-summary.csv`
+
+We have calculated summary metrics at the level of `module` where there are multiple discussion topics. This is optional (see .env creation above) The csv with the summary information includes the following columns:
+* 'module_id',
+* 'module_name',
+* 'module_unlock_at': assuming the course uses an unlock_at date this will be used to calculate,
+* 'number_of_posts': the total number of posts and replies in the module
+* 'median_posts_word_count': the median word count for all posts and replies to the module topics
+* 'average_time_to_post_hours': the average time to post or reply from the module_unlock_at date
+* 'first_reply_timestamp': the timestamp of the first post
+* 'average_time_to_post_from_first_reply_hours': the average time to post or reply from the first post (for cases where all discussions are released at once, this may be a more meaningful metric of time to reply)
+* 'average_posts_per_author': the average posts per author (does not include enrollments with no posts)
+
+
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for use with your own API tokens and Canvas domains.
 
