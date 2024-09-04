@@ -3,13 +3,23 @@ const { flatten } = require('./util')
 const writeToCSV = require('./writeToCSV')
 const writeSummaryToCSV = require('./writeSummaryToCSV')
 const writeSummaryByModuleToCSV = require('./writeSummaryByModuleToCSV')
-require('dotenv').config();
+require('dotenv').config()
 
-// Check for COURSE_IDS in environment variables
-if (!process.env.COURSE_IDS) {
-  console.error('Error: COURSE_IDS environment variable is not defined.');
-  process.exit(1); // Exit the script with a non-zero status
+const checkEnvVariable = (varName, errMsg) => {
+  if (!process.env[varName]) {
+    if (varName === 'INCLUDE_MODULE_SUMMARY') {
+      console.info(`There was no INCLUDE_MODULE_SUMMARY set... assuming you do not want to summarize by module.`)
+    } else {
+      console.error(`Error: ${errMsg}. See README for an example.env`)
+      process.exit(1); // Exit the script with a non-zero status
+    }
+  }
 }
+
+checkEnvVariable('COURSE_IDS', 'COURSE_IDS environment variable is not defined.')
+checkEnvVariable('INCLUDE_MODULE_SUMMARY', 'INCLUDE_MODULE_SUMMARY environment variable is not defined. This should be true or false')
+checkEnvVariable('CANVAS_API_TOKEN', 'CANVAS_API_TOKEN environment variable is not defined. You need a token to run this script.')
+checkEnvVariable('CANVAS_API_DOMAIN', 'CANVAS_API_DOMAIN environment variable is not defined.')
 
 const getDiscussionTopicIds = courseId => capi.getDiscussionTopics(courseId)
   .then(discussions => discussions.map(x => x.id))
@@ -105,28 +115,35 @@ const getPublishedModuleDiscussions = async courseId => {
     }
   }))
 
-  // console.log(modulesWithDiscussionItems)
 
   return modulesWithDiscussionItems
 
 }
 
-const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim());
+const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim())
+const returnSummaryByModule = process.env.INCLUDE_MODULE_SUMMARY ? process.env.INCLUDE_MODULE_SUMMARY === 'true' : false
 
 Promise.all(
-  courseIds.map(courseId =>
-    Promise.all([
+  courseIds.map(courseId => {
+    const promises = [
       getDiscussions(courseId).then(discussions => {
         return Promise.all([
           writeToCSV(courseId, discussions),  // Writes detailed discussion data to CSV
           writeSummaryToCSV(courseId, discussions)  // Writes summary of discussion data to CSV
         ])
-      }),
-      getPublishedModuleDiscussions(courseId).then(modulesWithDiscussionItems => {
-        return writeSummaryByModuleToCSV(courseId, modulesWithDiscussionItems)  // Writes summary of module data to CSV
       })
-    ])
-  )
+    ]
+
+    if (returnSummaryByModule) {
+      promises.push(
+        getPublishedModuleDiscussions(courseId).then(modulesWithDiscussionItems => {
+          return writeSummaryByModuleToCSV(courseId, modulesWithDiscussionItems)  // Writes summary of module data to CSV
+        })
+      )
+    }
+
+    return Promise.all(promises)
+  })
 ).catch(error => {
   const detailedErrorMessage = error.message || `An unexpected error occurred: ${error}`
   console.error('Error processing discussions and modules:', detailedErrorMessage)

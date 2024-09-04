@@ -64,15 +64,17 @@ These instructions will get you a copy of the project up and running on your loc
 1. Create a `.env` file.
 1. Add the following: `CANVAS_API_TOKEN={YOUR API TOKEN}`, `CANVAS_API_DOMAIN={YOUR API DOMAIN}`, `COURSE_IDS={YOUR COURSE ID(s)}`. > - At UBC the `CANVAS_API_DOMAIN` is `https://ubc.instructure.com/api/v1`
     > - At another institution it might be something like `https://{school}.instructure.com/api/v1`
+1. Add `INCLUDE_MODULE_SUMMARY=true` (or `INCLUDE_MODULE_SUMMARY=false`) to indicate whether you would like to include a summary grouped by module. If this is not in the .env it will default to false and no module summary will be created. 
 
     Your .env file should look like
     ```
     CANVAS_API_TOKEN=22322...
     CANVAS_API_DOMAIN=https://ubc.instructure.com/api/v1
     COURSE_IDS=1111,1112
+    INCLUDE_MODULE_SUMMARY=false
     ```
-1. Run the script. `npm start`.
-1. A `{course_id}-discussion.csv` file should be generated with discussion data in the output folder for each provided course_id.
+2. Run the script. `npm start`.
+3. A `{course_id}-discussion.csv` file should be generated with discussion data in the output folder for each provided course_id.
 
 ## Authors
 
