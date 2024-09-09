@@ -16,7 +16,9 @@ const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',
 const getWordCount = (str) => {
   const cleanStr = stripHTML(escapeComment(str))
   //const cleanStr = str.replace(/<\/?[^>]+(>|$)/g, "") // Remove HTML tags
-  return cleanStr.trim().split(/\s+/).length
+  const tokens = cleanStr.trim().split(/\s+/).filter(item => item !== '')
+  const tokenCount = tokens.length 
+  return tokenCount
 }
 
 // Median word count
