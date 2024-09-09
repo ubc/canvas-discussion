@@ -90,6 +90,12 @@ describe('Utils Functions', () => {
 			const expected = 0
 			expect(getWordCount(input)).toBe(expected)
 		})
+
+        it('should return 2 for a dashed-string', () =>{
+            const input = 'dashed-string'
+            const expected = 2
+            expect(getWordCount(input)).toBe(expected)
+        })
 	})
 
 })
