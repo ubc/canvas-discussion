@@ -135,28 +135,24 @@ const getPublishedModuleDiscussions = async courseId => {
 const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim())
 const returnSummaryByModule = process.env.INCLUDE_MODULE_SUMMARY ? process.env.INCLUDE_MODULE_SUMMARY === 'true' : false
 
+
 Promise.all(
   courseIds.map(courseId => {
-    const promises = [
-      getDiscussions(courseId).then(discussions => {
-        return Promise.all([
-          writeToCSV(courseId, discussions),  // Writes detailed discussion data to CSV
-          writeSummaryToCSV(courseId, discussions)  // Writes summary of discussion data to CSV
-        ])
-      })
-    ]
+    const basePromise = getDiscussions(courseId).then(discussions => 
+      Promise.all([
+        writeToCSV(courseId, discussions),  // Writes detailed discussion data to CSV
+        writeSummaryToCSV(courseId, discussions)  // Writes summary of discussion data to CSV
+      ])
+    )
 
-    if (returnSummaryByModule) {
-      promises.push(
-        getPublishedModuleDiscussions(courseId).then(modulesWithDiscussionItems => {
-          return writeSummaryByModuleToCSV(courseId, modulesWithDiscussionItems)  // Writes summary of module data to CSV
-        })
-      )
-    }
+    const additionalPromise = returnSummaryByModule
+      ? getPublishedModuleDiscussions(courseId).then(modulesWithDiscussionItems => 
+          writeSummaryByModuleToCSV(courseId, modulesWithDiscussionItems)  // Writes summary of module data to CSV
+        )
+      : Promise.resolve()  // No additional operation if condition is false
 
-    return Promise.all(promises)
+    return Promise.all([basePromise, additionalPromise])
   })
 ).catch(error => {
-  const detailedErrorMessage = error.message || `An unexpected error occurred: ${error}`
-  console.error('Error processing discussions and modules:', detailedErrorMessage)
+  console.error('Error processing discussions and modules:', error.message || `An unexpected error occurred: ${error}`)
 })
