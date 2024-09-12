@@ -27,7 +27,7 @@ const median = (arr) => {
 }
 
 // Function to calculate the topic summary
-const postStatistics = (posts, useForTimestampDiff) => {
+const postStatistics = (posts, referenceTimestamp) => {
   // Number of posts
   const numberOfPosts = posts.length
 
@@ -51,7 +51,7 @@ const postStatistics = (posts, useForTimestampDiff) => {
   // Average time in hours from topicCreatedAt to postTimestamp
   const timeDiffs = posts.map(post => {
     const postTimestamp = new Date(post.postTimestamp)
-    return (postTimestamp - useForTimestampDiff) / (1000 * 60 * 60) // Convert from milliseconds to hours
+    return (postTimestamp - referenceTimestamp) / (1000 * 60 * 60) // Convert from milliseconds to hours
   })
 
   const averageTimeDiff = Math.round((timeDiffs.reduce((acc, curr) => acc + curr, 0) / timeDiffs.length) * 10) / 10
