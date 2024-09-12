@@ -108,7 +108,7 @@ const getPublishedModuleDiscussions = async courseId => {
 
   const modulesWithDiscussionItems = await Promise.all(modules.map(async module => {
     const items = await capi.getModuleItems(courseId, module.id)
-    const discussionItems = items.filter(item => item.type === "Discussion" && item.published===true).flat()
+    const discussionItems = items.filter(item => item.type === "Discussion" && item.published)
 
     const discussionsAndTopics = await getDiscussionsAndTopics(courseId, discussionItems.map(item => item.content_id))
     const processedDiscussions = discussionsAndTopics.map(processDiscussionTopic)
