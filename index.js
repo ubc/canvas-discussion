@@ -127,14 +127,12 @@ const getPublishedModuleDiscussions = async courseId => {
     }
   }))
 
-
   return modulesWithDiscussionItems
 
 }
 
 const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim())
 const returnSummaryByModule = process.env.INCLUDE_MODULE_SUMMARY ? process.env.INCLUDE_MODULE_SUMMARY === 'true' : false
-
 
 Promise.all(
   courseIds.map(courseId => {
