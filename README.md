@@ -89,7 +89,7 @@ These instructions will get you a copy of the project up and running on your loc
     INCLUDE_MODULE_SUMMARY=false
     ```
 1. Run the script. `npm start`.
-1. A `{course_id}-discussion.csv` file should be generated with discussion data in the output folder for each provided course_id.
+1. A `{course_id}-discussion.csv` and a ` {course_id}-discussion-summary.csv` file should be generated with discussion data in the output folder for each provided course_id. If you have set `INCLUDE_MODULE_SUMMARY` to `true` then you will also see a file `{course_id}-module-discussion-summary.csv`. 
 
 ## Authors
 
