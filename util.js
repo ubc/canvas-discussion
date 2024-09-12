@@ -56,11 +56,11 @@ const postStatistics = (posts, useForTimestampDiff) => {
 
   const averageTimeDiff = Math.round((timeDiffs.reduce((acc, curr) => acc + curr, 0) / timeDiffs.length) * 10) / 10
 
-  // Average number of posts per postAuthorId
   const postCountsByAuthor = posts.reduce((acc, post) => {
     acc[post.postAuthorId] = (acc[post.postAuthorId] || 0) + 1
     return acc
   }, {})
+  // Average number of posts per postAuthorId
   const averagePostsPerAuthor = Math.round((Object.values(postCountsByAuthor).reduce((acc, curr) => acc + curr, 0) / Object.keys(postCountsByAuthor).length) * 10) / 10
 
   
