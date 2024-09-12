@@ -73,8 +73,8 @@ const processDiscussionTopic = ({ discussion, topic }) => {
   const topicTitle = topic.title
   const topicMessage = topic.message
   const author = topic.author
-  const topicCreatedAt = topic.created_at
-  const topicPostedAt = topic.posted_at
+  const topicCreatedAt = new Date(topic.created_at)
+  const topicPostedAt = new Date(topic.posted_at)
   const participants = discussion.participants
   const replies = discussion.view.length > 0
     ? discussion.view

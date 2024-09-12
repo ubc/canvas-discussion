@@ -1,6 +1,6 @@
 
 const path = require('path')
-const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics } = require('./util') // Adjust the path as necessary
+const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toPacificTimeString } = require('./util') 
 
 // Function to calculate the module summary
 const moduleSummary = (module) => {
@@ -35,11 +35,11 @@ const writeSummaryByModuleToCSV = (courseId, modules) => {
     const moduleDetails = {
       module_id: module.id,
       module_name: stripHTML(escapeComment(module.name)),
-      module_created_at: module.unlock_at || module.created_at,
+      module_created_at: toPacificTimeString(module.unlock_at) || toPacificTimeString(module.created_at),
       number_of_posts: summary.numberOfPosts,
       median_word_count: summary.medianWordCount,
       average_time_to_post_hours: summary.averageTimeDiff,
-      first_reply_timestamp: summary.firstReplyTimestamp,
+      first_reply_timestamp: toPacificTimeString(summary.firstReplyTimestamp),
       average_time_to_post_from_first_hours: summary.averageTimeToPostFromFirst,
       average_posts_per_author: summary.averagePostsPerAuthor
     }

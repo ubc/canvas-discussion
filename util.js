@@ -1,5 +1,13 @@
 const fs = require('fs')
 const path = require('path')
+const { DateTime } = require('luxon')
+
+const toPacificTimeString = (date) => 
+  date
+    ? DateTime.fromJSDate(date, { zone: 'utc' })   // Convert JS Date to Luxon DateTime in UTC
+        .setZone('America/Los_Angeles')           // Convert to Pacific Time
+        .toFormat('yyyy-MM-dd HH:mm:ss ZZZZ')     // Format the DateTime object
+    : null
 
 const flatten = arr => arr.reduce((acc, cur) =>
   Array.isArray(cur)
@@ -69,12 +77,13 @@ const postStatistics = (posts, referenceTimestamp) => {
   const postCounts = Object.values(postCountsByAuthor)
   const averagePostsPerAuthor = parseFloat(average(postCounts).toFixed(1))
   
-  const firstReplyTimestamp = new Date(Math.min(...posts.map(post => new Date(post.postTimestamp))))
+  const firstReplyTimestamp = new Date(Math.min(...posts.map(
+    post => new Date(post.postTimestamp))))
 
   const timeDiffsFromFirst = posts
     .map(post => {
       return post.postTimestamp > firstReplyTimestamp 
-        ? (postTimestamp - firstReplyTimestamp) / (1000 * 60 * 60) // Convert from milliseconds to hours
+        ? (post.postTimestamp - firstReplyTimestamp) / (1000 * 60 * 60) // Convert from milliseconds to hours
         : null
     })
     .filter(diff => diff !== null)
@@ -99,5 +108,6 @@ module.exports = {
   stripHTML,
   writeHeader,
   appendRow,
-  postStatistics
+  postStatistics,
+  toPacificTimeString
 }

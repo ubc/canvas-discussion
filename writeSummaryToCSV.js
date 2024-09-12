@@ -1,5 +1,5 @@
 const path = require('path')
-const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics } = require('./util') // Adjust the path as necessary
+const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toPacificTimeString } = require('./util') // Adjust the path as necessary
 
 const topicSummary = (topic) => {
   const posts = topic.replies.flat()
@@ -45,12 +45,12 @@ const writeSummaryToCSV = (courseId, data) => {
       //topic_message: stripHTML(escapeComment(discussion.topicMessage)),
       topic_author_id: discussion.topicAuthorId,
       topic_author_name: escapeComment(discussion.topicAuthorName),
-      topic_created_at: discussion.topicCreatedAt,
-      topic_posted_at: discussion.topicPostedAt,
+      topic_created_at: toPacificTimeString(discussion.topicCreatedAt),
+      topic_posted_at: toPacificTimeString(discussion.topicPostedAt),
       number_of_posts: summary.numberOfPosts,
       median_posts_word_count: summary.medianWordCount,
       average_time_to_post_hours: summary.averageTimeDiff,
-      first_reply_timestamp: summary.firstReplyTimestamp,
+      first_reply_timestamp: toPacificTimeString(summary.firstReplyTimestamp),
       average_time_to_post_from_first_reply_hours: summary.averageTimeToPostFromFirst,
       average_posts_per_author: summary.averagePostsPerAuthor
     }
