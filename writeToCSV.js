@@ -26,7 +26,7 @@ const writeToCSV = (courseId, data) => {
   ]
 
   // Write the headers to the CSV file
-  writeHeader(csvPath, Array.from(headers))
+  writeHeader(csvPath, headers)
 
   data.forEach(discussion => {
     const topicDetails = {
