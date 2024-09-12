@@ -46,7 +46,7 @@ const getNestedReplies = (replyObj, participants, topicId) => {
     postAuthorName: authorName,
     postMessage: replyObj.message,
     postLikes: replyObj.rating_sum || 0,
-    postTimestamp: replyObj.created_at,
+    postTimestamp: new Date(replyObj.created_at),
     postParentId: replyObj.parent_id || '',
     postId: replyObj.id
   }, ...replies]

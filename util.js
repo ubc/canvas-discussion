@@ -7,6 +7,19 @@ const flatten = arr => arr.reduce((acc, cur) =>
     : [...acc, cur]
 , [])
 
+const average = (arr) => {
+  if (arr.length === 0) return 0
+  const sum = arr.reduce((acc, curr) => acc + curr, 0)
+  return sum / arr.length
+}
+
+// median from array
+const median = (arr) => {
+  const sorted = arr.slice().sort()
+  const mid = Math.floor(sorted.length / 2)
+  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
+}
+
 const escapeComment = comment => comment ? '"' + comment.replace(/"/g, "'") + '"' : ''
 const stripHTML = comment => comment ? comment.replace(/(<([^>]+)>)/gi, "").replace(/&nbsp;/g, " ") : ''
 const writeHeader = (pathToFile, headers) => fs.writeFileSync(pathToFile, headers + '\r\n')
@@ -17,13 +30,6 @@ const getWordCount = (str) => {
   const cleanStr = stripHTML(escapeComment(str))
   //const cleanStr = str.replace(/<\/?[^>]+(>|$)/g, "") // Remove HTML tags
   return cleanStr.trim().split(/\s+/).length
-}
-
-// Median word count
-const median = (arr) => {
-  const sorted = arr.slice().sort()
-  const mid = Math.floor(sorted.length / 2)
-  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
 }
 
 // Function to calculate the topic summary
@@ -49,32 +55,32 @@ const postStatistics = (posts, referenceTimestamp) => {
 
   // Average time in hours from topicCreatedAt to postTimestamp
   const timeDiffs = posts.map(post => {
-    const postTimestamp = new Date(post.postTimestamp)
-    return (postTimestamp - referenceTimestamp) / (1000 * 60 * 60) // Convert from milliseconds to hours
+    return (post.postTimestamp - referenceTimestamp) 
   })
 
-  const averageTimeDiff = Math.round((timeDiffs.reduce((acc, curr) => acc + curr, 0) / timeDiffs.length) * 10) / 10
+  const averageTimeDiff = parseFloat(average(timeDiffs).toFixed(1)) / (1000 * 60 * 60) // Convert from milliseconds to hours
 
   const postCountsByAuthor = posts.reduce((acc, post) => {
     acc[post.postAuthorId] = (acc[post.postAuthorId] || 0) + 1
     return acc
   }, {})
   // Average number of posts per postAuthorId
-  const averagePostsPerAuthor = Math.round((Object.values(postCountsByAuthor).reduce((acc, curr) => acc + curr, 0) / Object.keys(postCountsByAuthor).length) * 10) / 10
 
+  const postCounts = Object.values(postCountsByAuthor)
+  const averagePostsPerAuthor = parseFloat(average(postCounts).toFixed(1))
   
   const firstReplyTimestamp = new Date(Math.min(...posts.map(post => new Date(post.postTimestamp))))
+
   const timeDiffsFromFirst = posts
     .map(post => {
-      const postTimestamp = new Date(post.postTimestamp)
-      return postTimestamp > firstReplyTimestamp 
+      return post.postTimestamp > firstReplyTimestamp 
         ? (postTimestamp - firstReplyTimestamp) / (1000 * 60 * 60) // Convert from milliseconds to hours
         : null
     })
     .filter(diff => diff !== null)
   
   const averageTimeToPostFromFirst = timeDiffsFromFirst.length > 0
-    ? Math.round((timeDiffsFromFirst.reduce((acc, curr) => acc + curr, 0) / timeDiffsFromFirst.length) * 10) / 10
+    ? parseFloat(average(timeDiffsFromFirst).toFixed(1))
     : 0
     
   return {
