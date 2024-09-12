@@ -5,7 +5,8 @@
 # Canvas Discussion
 
 ### Data
-> `{course_id}-discussion.csv`
+> `{course_id}-discussion.csv`  
+
 This project pulls data via the Canvas API the discussions for the specified Canvas course(s) and exports the results as CSV. The columns exported are:
 * 'topic_id',
 * 'topic_title',
