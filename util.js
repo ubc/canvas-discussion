@@ -21,7 +21,7 @@ const getWordCount = (str) => {
 
 // Median word count
 const median = (arr) => {
-  const sorted = arr.slice().sort((a, b) => a - b)
+  const sorted = arr.slice().sort()
   const mid = Math.floor(sorted.length / 2)
   return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
 }
@@ -35,13 +35,12 @@ const postStatistics = (posts, referenceTimestamp) => {
     return {
       numberOfPosts: 0,
       medianWordCount: 0,
-      averageTimeDiff: 0,
-      firstReplyTimestamp: 0,
-      averageTimeToPostFromFirst: 0,
-      averagePostsPerAuthor: 0
+      averageTimeDiff: null,
+      firstReplyTimestamp: null,
+      averageTimeToPostFromFirst: null,
+      averagePostsPerAuthor: null
     }
   }
-
 
   // Word counts
   const wordCounts = posts.map(post => getWordCount(post.postMessage))
