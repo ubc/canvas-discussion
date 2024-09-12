@@ -5,19 +5,26 @@ const writeSummaryToCSV = require('./writeSummaryToCSV')
 const writeSummaryByModuleToCSV = require('./writeSummaryByModuleToCSV')
 require('dotenv').config()
 
+const envVariableWarning = (msg) => {
+  console.info(msg)
+}
+const envVariableError = (msg) => {
+  console.error(msg)
+  process.exit(1)
+
+}
 const checkEnvVariable = (varName, errMsg) => {
   if (!process.env[varName]) {
     if (varName === 'INCLUDE_MODULE_SUMMARY') {
-      console.info(`There was no INCLUDE_MODULE_SUMMARY set... assuming you do not want to summarize by module.`)
+      envVariableWarning(errMsg)
     } else {
-      console.error(`Error: ${errMsg}. See README for an example.env`)
-      process.exit(1); // Exit the script with a non-zero status
+      envVariableError(`Error: ${errMsg}. See README for an example.env`)
     }
   }
 }
 
 checkEnvVariable('COURSE_IDS', 'COURSE_IDS environment variable is not defined.')
-checkEnvVariable('INCLUDE_MODULE_SUMMARY', 'INCLUDE_MODULE_SUMMARY environment variable is not defined. This should be true or false')
+checkEnvVariable('INCLUDE_MODULE_SUMMARY', 'INCLUDE_MODULE_SUMMARY environment variable is not defined. Define and set to `true` to include summary at module.')
 checkEnvVariable('CANVAS_API_TOKEN', 'CANVAS_API_TOKEN environment variable is not defined. You need a token to run this script.')
 checkEnvVariable('CANVAS_API_DOMAIN', 'CANVAS_API_DOMAIN environment variable is not defined.')
 
