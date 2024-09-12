@@ -94,7 +94,5 @@ module.exports = {
   stripHTML,
   writeHeader,
   appendRow,
-  getWordCount,
-  median,
   postStatistics
 }

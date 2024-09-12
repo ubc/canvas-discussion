@@ -81,8 +81,8 @@ const processDiscussionTopic = ({ discussion, topic }) => {
     topicId,
     topicTitle,
     topicMessage,
-    topicAuthorId: author.id || '',
-    topicAuthorName: author.display_name || '',
+    topicAuthorId: author.id || '', // the topic author id can be null
+    topicAuthorName: author.display_name || '', // the topic author can be null
     topicCreatedAt,
     topicPostedAt,
     replies
