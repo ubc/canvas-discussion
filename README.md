@@ -88,8 +88,8 @@ These instructions will get you a copy of the project up and running on your loc
     COURSE_IDS=1111,1112
     INCLUDE_MODULE_SUMMARY=false
     ```
-2. Run the script. `npm start`.
-3. A `{course_id}-discussion.csv` file should be generated with discussion data in the output folder for each provided course_id.
+1. Run the script. `npm start`.
+1. A `{course_id}-discussion.csv` file should be generated with discussion data in the output folder for each provided course_id.
 
 ## Authors
 
