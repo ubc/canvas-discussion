@@ -53,13 +53,18 @@ const getNestedReplies = (replyObj, participants, topicId) => {
 }
 
 const getDiscussionsAndTopics = async (courseId, topicIds) => {
+  const fetchDetails = topicId => Promise.all([
+    capi.getFullDiscussion(courseId, topicId),
+    capi.getDiscussionTopic(courseId, topicId),
+  ])
+
   const discussionsAndTopics = await Promise.all(
     topicIds.map(async topicId => {
-      const discussion = await capi.getFullDiscussion(courseId, topicId)
-      const topic = await capi.getDiscussionTopic(courseId, topicId)
+      const [discussion, topic] = await fetchDetails(topicId)
       return { discussion, topic }
     })
   )
+
   return discussionsAndTopics
 }
 
