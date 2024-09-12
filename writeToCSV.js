@@ -9,19 +9,19 @@ const writeToCSV = (courseId, data) => {
   const csvPath = path.join(__dirname, `output/${courseId}-discussion.csv`)
 
   const headers =[
-    'topic_id', 
-    'topic_title', 
-    'topic_message', 
+    'topic_id',
+    'topic_title',
+    'topic_message',
     'topic_author_id',
-    'topic_author_name', 
-    'topic_created_at', 
+    'topic_author_name',
+    'topic_created_at',
     'topic_posted_at',
     'post_author_id',
-    'post_author_name', 
-    'post_id', 
-    'post_parent_id', 
+    'post_author_name',
+    'post_id',
+    'post_parent_id',
     'post_message',
-    'post_likes', 
+    'post_likes',
     'post_timestamp'
   ]
 
