@@ -1,5 +1,5 @@
 const capi = require('node-canvas-api')
-const { flatten } = require('./util')
+const { flatten, toDateTime } = require('./util')
 const writeToCSV = require('./writeToCSV')
 const writeSummaryToCSV = require('./writeSummaryToCSV')
 const writeSummaryByModuleToCSV = require('./writeSummaryByModuleToCSV')
@@ -47,7 +47,7 @@ const getNestedReplies = (replyObj, participants, topicId) => {
     postAuthorName: authorName,
     postMessage: replyObj.message,
     postLikes: replyObj.rating_sum || 0,
-    postTimestamp: new Date(replyObj.created_at),
+    postTimestamp: toDateTime(replyObj.created_at),
     postParentId: replyObj.parent_id || '',
     postId: replyObj.id
   }, ...replies]
@@ -74,8 +74,8 @@ const processDiscussionTopic = ({ discussion, topic }) => {
   const topicTitle = topic.title
   const topicMessage = topic.message
   const author = topic.author
-  const topicCreatedAt = topic.created_at ? new Date(topic.created_at) : null
-  const topicPostedAt = topic.posted_at ? new Date(topic.posted_at) : null
+  const topicCreatedAt = toDateTime(topic.created_at)
+  const topicPostedAt = toDateTime(topic.posted_at)
   const participants = discussion.participants
   const replies = discussion.view.length > 0
     ? discussion.view
