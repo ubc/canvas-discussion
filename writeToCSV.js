@@ -1,25 +1,21 @@
-const fs = require('fs')
 const path = require('path')
-const fswrite = fs.writeFileSync
-const fsappend = fs.appendFileSync
 
-const writeHeader = (pathToFile, header) => fswrite(pathToFile, header + '\r\n')
-const append = (pathToFile, row) => fsappend(pathToFile, row + '\r\n')
-
-const escapeComment = comment => comment ? '"' + comment.replace(/"/g, "'") + '"' : ''
-
-const stripHTML = comment => comment ? comment.replace(/(<([^>]+)>)/gi, "").replaceAll('&nbsp;', " ") : ''
+const { escapeComment, stripHTML, writeHeader, appendRow, toPacificTimeString} = require('./util') // Adjust the path as necessary
 
 const writeToCSV = (courseId, data) => {
-  const csv = path.join(__dirname, `output/${courseId}-discussion.csv`);
 
-  const header = [
+  console.log(`Writing discussion data for course: ${courseId}`);
+
+  const csvPath = path.join(__dirname, `output/${courseId}-discussion.csv`)
+
+  const headers =[
     'topic_id',
     'topic_title',
     'topic_message',
     'topic_author_id',
     'topic_author_name',
-    'topic_timestamp',
+    'topic_created_at',
+    'topic_posted_at',
     'post_author_id',
     'post_author_name',
     'post_id',
@@ -27,43 +23,40 @@ const writeToCSV = (courseId, data) => {
     'post_message',
     'post_likes',
     'post_timestamp'
-  ];
+  ]
 
-  writeHeader(csv, header);
+  // Write the headers to the CSV file
+  writeHeader(csvPath, headers)
 
   data.forEach(discussion => {
-    const topicDetails = [
-      discussion.topicId,
-      stripHTML(escapeComment(discussion.topicTitle)),
-      stripHTML(escapeComment(discussion.topicMessage)),
-      discussion.topicAuthorId,
-      escapeComment(discussion.topicAuthorName),
-      discussion.topicCreatedAt
-    ];
+    const topicDetails = {
+      topic_id: discussion.topicId,
+      topic_title: stripHTML(escapeComment(discussion.topicTitle)),
+      topic_message: stripHTML(escapeComment(discussion.topicMessage)),
+      topic_author_id: discussion.topicAuthorId,
+      topic_author_name: escapeComment(discussion.topicAuthorName),
+      topic_created_at: toPacificTimeString(discussion.topicCreatedAt),
+      topic_posted_at: toPacificTimeString(discussion.topicPostedAt)
+    };
 
     if (Array.isArray(discussion.replies) && discussion.replies.length > 0) {
       discussion.replies.flat().forEach(post => {
-        append(csv, [
-          discussion.topicId,
-          stripHTML(escapeComment(discussion.topicTitle)),
-          stripHTML(escapeComment(discussion.topicMessage)),
-          discussion.topicAuthorId,
-          escapeComment(discussion.topicAuthorName),
-          discussion.topicCreatedAt,
-          post.postAuthorId,
-          escapeComment(post.postAuthorName),
-          post.postId,
-          post.postParentId,
-          stripHTML(escapeComment(post.postMessage)),
-          post.postLikes,
-          post.postTimestamp
-        ]);
-      });
+        const postDetails = {
+          ...topicDetails,
+          post_author_id: post.postAuthorId,
+          post_author_name: escapeComment(post.postAuthorName),
+          post_id: post.postId,
+          post_parent_id: post.postParentId,
+          post_message: stripHTML(escapeComment(post.postMessage)),
+          post_likes: post.postLikes,
+          post_timestamp: toPacificTimeString(post.postTimestamp)
+        };
+        appendRow(csvPath, Object.values(postDetails))
+      })
     } else {
-      append(csv, topicDetails);
+      appendRow(csvPath, Object.values(topicDetails))
     }
-  });
-};
+  })
+}
 
-module.exports = writeToCSV
-
+module.exports = writeToCSV;
