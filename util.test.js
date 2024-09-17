@@ -189,5 +189,11 @@ describe('Utils Functions', () => {
       const expected = 2
       expect(getWordCount(input)).toBe(expected)
     })
+
+    it('should count spelling mistakes', () => {
+      const input = 'should count speling mistakes'
+      const expected = 4
+      expect(getWordCount(input)).toBe(expected)
+    })
   })
 })
