@@ -11,12 +11,23 @@ const writeHeader = (pathToFile, headers) => fs.writeFileSync(pathToFile, header
 
 const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',') + '\r\n')
 
-const toPacificTimeString = (date) => 
-  date
-    ? DateTime.fromJSDate(date, { zone: 'utc' })   // Convert JS Date to Luxon DateTime in UTC
-        .setZone('America/Los_Angeles')           // Convert to Pacific Time
-        .toFormat('yyyy-MM-dd HH:mm:ss ZZZZ')     // Format the DateTime object
-    : null
+const toDateTime = (str) => {
+  if (!str) return null  // Return null if input is null, undefined, or an empty string
+
+  try {
+    const dateTime = DateTime.fromISO(str, { zone: 'utc' })
+    return dateTime.isValid ? dateTime : null  // Return null if the DateTime is invalid
+  } catch {
+    return null  // Return null if an error occurs
+  }
+}
+
+const convertToPacificTime = (dateTime) => {
+  if (dateTime && dateTime.isValid) {
+    return dateTime.setZone('America/Los_Angeles')
+  }
+  return null  // Return null if the DateTime is invalid or not provided
+}
 
 const flatten = arr => arr.reduce((acc, cur) =>
   Array.isArray(cur)
@@ -132,7 +143,8 @@ module.exports = {
   writeHeader,
   appendRow,
   postStatistics,
-  toPacificTimeString,
+  convertToPacificTime,
   getDateDiff,
-  getWordCount
+  getWordCount,
+  toDateTime
 }

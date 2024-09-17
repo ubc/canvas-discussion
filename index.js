@@ -4,6 +4,7 @@ const writeToCSV = require('./writeToCSV')
 const writeSummaryToCSV = require('./writeSummaryToCSV')
 const writeSummaryByModuleToCSV = require('./writeSummaryByModuleToCSV')
 require('dotenv').config()
+const R = require('ramda')
 
 const envVariableWarning = (msg) => {
   console.info(msg)

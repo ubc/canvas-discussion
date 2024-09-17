@@ -1,8 +1,84 @@
-const { escapeComment, stripHTML, writeHeader, appendRow, getWordCount, getDateDiff } = require('./util')
+const { escapeComment, stripHTML, writeHeader, appendRow, getWordCount, getDateDiff, toDateTime, convertToPacificTime} = require('./util')
 const fs = require('fs')
 const path = require('path')
+const { DateTime } = require('luxon')
 
 describe('Utils Functions', () => {
+
+	describe.only('convertToPacificTime', () => {
+
+		it('should convert a valid UTC DateTime object with only hours to Pacific Time', () => {
+		  const utcDateTime = DateTime.fromISO('2024-09-16T12:00:00Z', { zone: 'utc' })
+		  
+		  const pacificDateTime = convertToPacificTime(utcDateTime)
+		  
+		  // Assert that the conversion is correct
+		  expect(pacificDateTime).toBeInstanceOf(DateTime)
+		  expect(pacificDateTime.toISO()).toBe('2024-09-16T05:00:00.000-07:00')  // Pacific Time offset (-07:00 for PDT)
+		})
+	  
+		it('should handle UTC midnight correctly', () => {
+		  const utcDateTime = DateTime.fromISO('2024-09-16T00:00:00Z', { zone: 'utc' })
+		const pacificDateTime = convertToPacificTime(utcDateTime)
+		  // Assert that the conversion is correct
+		  expect(pacificDateTime).toBeInstanceOf(DateTime)
+		  expect(pacificDateTime.toISO()).toBe('2024-09-15T17:00:00.000-07:00')  // Pacific Time offset (-07:00 for PDT)
+		})
+
+		it('should handle UTC time with -08:00 offset correctly', () => {
+			const utcDateTime = DateTime.fromISO('2024-01-16T12:00:00Z', { zone: 'utc' })
+			const pacificDateTime = convertToPacificTime(utcDateTime)
+			
+			expect(pacificDateTime).toBeInstanceOf(DateTime)
+			// Pacific Time (PST) is UTC-8, so noon UTC should be 4 AM PST the same day
+			expect(pacificDateTime.toISO()).toBe('2024-01-16T04:00:00.000-08:00')
+		  })
+		
+	  
+		it('should return null if the input is null', () => {
+		  const result = convertToPacificTime(null)
+		  expect(result).toBeNull()
+		})
+	  
+		it('should return null if the input is an invalid DateTime object', () => {
+		  const invalidDateTime = DateTime.invalid('Invalid DateTime')
+		  
+		  const result = convertToPacificTime(invalidDateTime)
+		  expect(result).toBeNull()
+		})
+	  })
+
+	describe('toDateTime', () => {
+  
+		it('should convert a valid ISO date string to a luxon DateTime object', () => {
+		  const isoString = '2024-09-16T12:34:56.000Z'
+		  const result = toDateTime(isoString)
+		  expect(result.toISO()).toBe(isoString)
+		})
+	  
+		it('should return null if the input is null', () => {
+		  const result = toDateTime(null)
+		  expect(result).toBeNull()
+		})
+	  
+		it('should return null if the input is undefined', () => {
+		  const result = toDateTime(undefined)
+		  expect(result).toBeNull()
+		})
+	  
+		it('should handle an empty string by returning null', () => {
+		  const emptyString = ''
+		  const result = toDateTime(emptyString)
+		  // The behavior with empty strings might vary, but usually DateTime.fromISO() will produce an invalid DateTime
+		  expect(result).toBeNull()
+		})
+	  
+		it('should return null if the input is an invalid ISO string', () => {
+		  const invalidIsoString = 'invalid-date'
+		  const result = toDateTime(invalidIsoString)
+		  expect(result).toBeNull()
+		})
+	})
 
 	describe('getDateDiff', () => {
 		it('should return 0 if the same date and different times', () => {
