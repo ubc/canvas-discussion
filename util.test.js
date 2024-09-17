@@ -5,11 +5,30 @@ const path = require('path')
 describe('Utils Functions', () => {
 
 	describe('getDateDiff', () => {
-		it('should return 0 if the same date'), () => {
+		it('should return 0 if the same date and time', () => {
+		  const referenceTimestamp = '2024-06-22T00:23:54Z'
+		  const relativeTimestamp = '2024-06-22T00:23:54Z' // Same date and time
+	  
+		  // Call the function and check the result
+		  expect(getDateDiff(referenceTimestamp, relativeTimestamp)).toBe(0)
+		}),
+
+		it('should return 1 if the relativeDate is the next day any time', () => {
 			const referenceTimestamp = '2024-06-22T00:23:54Z'
-			const relativeTimestamp = '2024-06-22T15:23:54Z'
-			expect(getDateDiff(referenceTimestamp, relativeTimestamp).toEqual(0))
-		}
+			const relativeTimestamp = '2024-06-23T12:23:54Z' // Same date and time
+		
+			// Call the function and check the result
+			expect(getDateDiff(referenceTimestamp, relativeTimestamp)).toBe(1)
+		})
+
+		it('should return 10 if the relativeDate is 10 days later', () => {
+			const referenceTimestamp = '2024-06-10T00:23:54Z'
+			const relativeTimestamp = '2024-06-20T12:23:54Z' // Same date and time
+		
+			// Call the function and check the result
+			expect(getDateDiff(referenceTimestamp, relativeTimestamp)).toBe(10)
+		})
+
 	})
 	
 	describe('escapeComment', () => {

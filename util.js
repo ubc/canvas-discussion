@@ -49,7 +49,14 @@ const getWordCount = (str) => {
 }
 
 const getDateDiff = (referenceTimestamp, relativeTimestamp) => {
-  const diffInDays = relativeTimestamp.diff(referenceTimestamp, 'days').days 
+
+  const referenceDateTime = DateTime.fromISO(referenceTimestamp)
+  const relativeDateTime = DateTime.fromISO(relativeTimestamp)
+
+  // Calculate the difference in days
+  const diffInDays = relativeDateTime.diff(referenceDateTime, 'days').days
+
+  // Return the floor of the difference in days
   return Math.floor(diffInDays)
 
 }
@@ -126,5 +133,6 @@ module.exports = {
   appendRow,
   postStatistics,
   toPacificTimeString,
-  getDateDiff
+  getDateDiff,
+  getWordCount
 }
