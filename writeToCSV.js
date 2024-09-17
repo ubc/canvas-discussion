@@ -1,6 +1,6 @@
 const path = require('path')
 
-const { escapeComment, stripHTML, writeHeader, appendRow, toPacificTimeString } = require('./util') // Adjust the path as necessary
+const { escapeComment, stripHTML, writeHeader, appendRow, convertToPacificTime, toDateTime } = require('./util') // Adjust the path as necessary
 
 const writeToCSV = (courseId, data) => {
   console.log(`Writing discussion data for course: ${courseId}`)
@@ -34,8 +34,8 @@ const writeToCSV = (courseId, data) => {
       topic_message: stripHTML(escapeComment(discussion.topicMessage)),
       topic_author_id: discussion.topicAuthorId,
       topic_author_name: escapeComment(discussion.topicAuthorName),
-      topic_created_at: toPacificTimeString(discussion.topicCreatedAt),
-      topic_posted_at: toPacificTimeString(discussion.topicPostedAt)
+      topic_created_at: convertToPacificTime(toDateTime(discussion.topicCreatedAt)),
+      topic_posted_at: convertToPacificTime(toDateTime(discussion.topicPostedAt))
     }
 
     if (Array.isArray(discussion.replies) && discussion.replies.length > 0) {
@@ -48,7 +48,7 @@ const writeToCSV = (courseId, data) => {
           post_parent_id: post.postParentId,
           post_message: stripHTML(escapeComment(post.postMessage)),
           post_likes: post.postLikes,
-          post_timestamp: toPacificTimeString(post.postTimestamp)
+          post_timestamp: convertToPacificTime(toDateTime(post.postTimestamp))
         }
         appendRow(csvPath, Object.values(postDetails))
       })

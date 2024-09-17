@@ -1,9 +1,9 @@
 const path = require('path')
-const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toPacificTimeString } = require('./util') // Adjust the path as necessary
+const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toDateTime, convertToPacificTime  } = require('./util') // Adjust the path as necessary
 
 const topicSummary = (topic) => {
   const posts = topic.replies.flat()
-  const topicCreatedAt = new Date(topic.topicCreatedAt)
+  const topicCreatedAt = toDateTime(topic.topicCreatedAt)
 
   const postSummary = postStatistics(posts, topicCreatedAt)
 
@@ -25,9 +25,9 @@ const writeSummaryToCSV = (courseId, data) => {
     'topic_posted_at',
     'number_of_posts',
     'median_posts_word_count',
-    'average_time_to_post_hours',
+    'average_time_to_post_days',
     'first_reply_timestamp',
-    'average_time_to_post_from_first_reply_hours',
+    'average_time_to_post_from_first_days',
     'average_posts_per_author'
   ]
 
@@ -43,14 +43,15 @@ const writeSummaryToCSV = (courseId, data) => {
       // topic_message: stripHTML(escapeComment(discussion.topicMessage)),
       topic_author_id: discussion.topicAuthorId,
       topic_author_name: escapeComment(discussion.topicAuthorName),
-      topic_created_at: toPacificTimeString(discussion.topicCreatedAt),
-      topic_posted_at: toPacificTimeString(discussion.topicPostedAt),
+      topic_created_at: convertToPacificTime(toDateTime(discussion.topicCreatedAt)),
+      topic_posted_at: convertToPacificTime(toDateTime(discussion.topicPostedAt)),
       number_of_posts: summary.numberOfPosts,
-      median_posts_word_count: summary.medianWordCount,
-      average_time_to_post_hours: summary.averageTimeDiff,
-      first_reply_timestamp: toPacificTimeString(summary.firstReplyTimestamp),
-      average_time_to_post_from_first_reply_hours: summary.averageTimeToPostFromFirst,
+      median_word_count: summary.medianWordCount,
+      average_time_to_post_from_reference_days: summary.averageTimeDiffFromReference,
+      first_reply_timestamp: convertToPacificTime(summary.firstReplyTimestamp),
+      average_time_to_post_from_first_days: summary.averageTimeDiffFromFirst,
       average_posts_per_author: summary.averagePostsPerAuthor
+ 
     }
     appendRow(csvPath, Object.values(topicDetails))
   })

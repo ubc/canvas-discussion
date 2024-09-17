@@ -12,8 +12,8 @@ const writeHeader = (pathToFile, headers) => fs.writeFileSync(pathToFile, header
 const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',') + '\r\n')
 
 const toDateTime = (str) => {
-  if (!str) return null  // Return null if input is null, undefined, or an empty string
-
+  if (!str) 
+    return null  
   try {
     const dateTime = DateTime.fromISO(str, { zone: 'utc' })
     return dateTime.isValid ? dateTime : null 
@@ -60,43 +60,34 @@ const getWordCount = (str) => {
 }
 
 const getDateDiff = (referenceTimestamp, relativeTimestamp) => {
+	const referenceDateTime = referenceTimestamp instanceof DateTime 
+		? referenceTimestamp 
+		: toDateTime(referenceTimestamp)
 
-  const referenceDateTime = DateTime.fromISO(referenceTimestamp)
-  const relativeDateTime = DateTime.fromISO(relativeTimestamp)
+	const relativeDateTime = relativeTimestamp instanceof DateTime 
+		? relativeTimestamp 
+		: toDateTime(relativeTimestamp)
 
-  // Calculate the difference in days
-  const diffInDays = relativeDateTime.diff(referenceDateTime, 'days').days
+	const diffInDays = relativeDateTime.diff(referenceDateTime, 'days').days
 
-  // Return the floor of the difference in days
-  return Math.floor(diffInDays)
-
+	return Math.floor(diffInDays)
 }
 
-const msToHours = ms => ms / (1000 * 60 * 60)
-const msToDays = ms => ms / (1000 * 60 * 60 * 24)
+const calculateAverageDiffInDays = (posts, referenceTimestamp) => {
+	if (referenceTimestamp === null) {
+		return null
+	}
 
-// Function to calculate average time difference in a specified unit
-const calculateAverageTimeDiff = (posts, referenceTimestamp, timeUnit = 'hours') => {
-  const getTimeDiffInMs = (timestamp, reference) => {
-    const diff = timestamp - reference;
-    return diff > 0 ? diff : null;
-  }
-  
-  // Convert the average time difference to the specified unit
-  const unitConverter = timeUnit === 'hours' ? msToHours : (timeUnit === 'days' ? msToDays : msToHours)
-  
-  return unitConverter(
-    average(
-      posts
-        .map(post => getTimeDiffInMs(post.postTimestamp, referenceTimestamp))
-        .filter(diff => diff !== null)
-    )
-  )
+	const differences = posts
+		.map(post => getDateDiff(referenceTimestamp, post.postTimestamp))
+		.filter(dayDifference => dayDifference !== null)
+
+	// Return the average of the differences, or null if there are no valid differences
+	return differences.length > 0 ? average(differences) : null
 }
 
 // Function to calculate the topic summary
 const postStatistics = (posts, referenceTimestamp) => {
-  // Number of posts
   const numberOfPosts = posts.length
 
   if (numberOfPosts === 0) {
@@ -105,10 +96,18 @@ const postStatistics = (posts, referenceTimestamp) => {
       medianWordCount: 0,
       averageTimeDiff: null,
       firstReplyTimestamp: null,
-      averageTimeToPostFromFirst: null,
+      averageTimeDiffFromReference: null,
+      averageTimeDiffFromFirst: null,
       averagePostsPerAuthor: null
     }
   }
+
+  const firstReplyMS = Math.min(
+    ...posts.map(
+    post => post.postTimestamp
+  ))
+
+  const firstReplyTimestamp = DateTime.fromMillis(firstReplyMS, { zone: 'utc' });
 
   const wordCounts = posts.map(post => getWordCount(post.postMessage))
   const medianWordCount = Math.round(median(wordCounts) * 10) / 10
@@ -121,8 +120,8 @@ const postStatistics = (posts, referenceTimestamp) => {
   const postCounts = Object.values(postCountsByAuthor)
   const averagePostsPerAuthor = parseFloat(average(postCounts).toFixed(1))
 
-  const averageTimeDiffFromReferenceInHours = calculateAverageTimeDiff(posts, referenceTimestamp, 'hours')
-  const averageTimeDiffFromFirstInHours = calculateAverageTimeDiff(posts, firstReplyTimestamp, 'hours')
+  const averageTimeDiffFromReference = calculateAverageDiffInDays(posts, referenceTimestamp)
+  const averageTimeDiffFromFirst = calculateAverageDiffInDays(posts, firstReplyTimestamp)
 
     
   return {
@@ -130,8 +129,8 @@ const postStatistics = (posts, referenceTimestamp) => {
     medianWordCount,
     referenceTimestamp,
     firstReplyTimestamp,
-    averageTimeDiffFromReferenceInHours,
-    averageTimeDiffFromFirstInHours,
+    averageTimeDiffFromReference,
+    averageTimeDiffFromFirst,
     averagePostsPerAuthor
   }
 
