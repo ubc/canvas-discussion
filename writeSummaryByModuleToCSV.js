@@ -20,12 +20,11 @@ const writeSummaryByModuleToCSV = (courseId, modules) => {
     'module_id',
     'module_name',
     'module_unlock_at',
-    'module_created_at',
     'number_of_posts',
     'median_word_count',
-    'average_time_to_post_days',
+    'average_days_to_post_from_unlock_at',
     'first_reply_timestamp',
-    'average_time_to_post_from_first_days',
+    'average_days_to_post_from_first_response',
     'average_posts_per_author'
   ]
 
@@ -40,7 +39,6 @@ const writeSummaryByModuleToCSV = (courseId, modules) => {
       module_id: module.id,
       module_name: stripHTML(escapeComment(module.name)),
       module_unlock_at: convertToPacificTime(toDateTime(module.unlock_at)),
-      module_created_at: convertToPacificTime(toDateTime(module.created_at)),
       number_of_posts: summary.numberOfPosts,
       median_word_count: summary.medianWordCount,
       average_time_to_post_from_reference_days: summary.averageTimeDiffFromReference,

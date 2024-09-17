@@ -3,9 +3,9 @@ const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toDate
 
 const topicSummary = (topic) => {
   const posts = topic.replies.flat()
-  const topicCreatedAt = toDateTime(topic.topicCreatedAt)
+  const topicPostedAt = toDateTime(topic.topic_posted_at)
 
-  const postSummary = postStatistics(posts, topicCreatedAt)
+  const postSummary = postStatistics(posts, topicPostedAt)
 
   return postSummary
 }
@@ -18,16 +18,14 @@ const writeSummaryToCSV = (courseId, data) => {
   const headers = [
     'topic_id',
     'topic_title',
-    // 'topic_message',
     'topic_author_id',
     'topic_author_name',
-    'topic_created_at',
     'topic_posted_at',
     'number_of_posts',
     'median_posts_word_count',
-    'average_time_to_post_days',
+    'average_days_to_post_from_posted_at',
     'first_reply_timestamp',
-    'average_time_to_post_from_first_days',
+    'average_days_to_post_from_first_response',
     'average_posts_per_author'
   ]
 
@@ -43,7 +41,6 @@ const writeSummaryToCSV = (courseId, data) => {
       // topic_message: stripHTML(escapeComment(discussion.topicMessage)),
       topic_author_id: discussion.topicAuthorId,
       topic_author_name: escapeComment(discussion.topicAuthorName),
-      topic_created_at: convertToPacificTime(toDateTime(discussion.topicCreatedAt)),
       topic_posted_at: convertToPacificTime(toDateTime(discussion.topicPostedAt)),
       number_of_posts: summary.numberOfPosts,
       median_word_count: summary.medianWordCount,

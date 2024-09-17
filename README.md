@@ -33,13 +33,12 @@ We have calculated summary metrics for each topic. The csv with the summary info
 * 'topic_title',
 * 'topic_author_id',
 * 'topic_author_name',
-* 'topic_created_at', 
 * 'topic_posted_at',
 * 'number_of_posts': the total number of posts and replies in the topic
 * 'median_posts_word_count': the median word count for all posts and replies to the topic
-* 'average_time_to_post_hours': the average time to post or reply from the topic created_at date
+* 'average_days_to_post_from_posted_at': the average number of days to post from the topic posted_at date. A 'day' is calculated by date, not hours
 * 'first_reply_timestamp': the timestamp of the first post
-* 'average_time_to_post_from_first_reply_hours': the average time to post or reply from the first post (for cases where all discussions are released at once, this may be a more meaningful metric of time to reply)
+* 'average_days_to_post_from_first_response': the average number of days to post from first topic response. A 'day' is calculated by date, not hours
 * 'average_posts_per_author': the average posts per author (does not include enrollments with no posts)
 
 Where a `post` is a response to a topic, and a `reply` is a reply to the post. 
@@ -49,16 +48,22 @@ Where a `post` is a response to a topic, and a `reply` is a reply to the post.
 > `{course_id}-module-discussion-summary.csv`
 
 We have calculated summary metrics at the level of `module` where there are multiple discussion topics. This is optional (see .env creation above) The csv with the summary information includes the following columns:
+
 * 'module_id',
 * 'module_name',
 * 'module_unlock_at': assuming the course uses an unlock_at date this will be used to calculate,
 * 'number_of_posts': the total number of posts and replies in the module
 * 'median_posts_word_count': the median word count for all posts and replies to the module topics
-* 'average_time_to_post_hours': the average time to post or reply from the module_unlock_at date
+* 'average_days_to_post_from_unlock_at': the average number of days to post or reply from the module's unlock_at date
 * 'first_reply_timestamp': the timestamp of the first post
-* 'average_time_to_post_from_first_reply_hours': the average time to post or reply from the first post (for cases where all discussions are released at once, this may be a more meaningful metric of time to reply)
+* 'average_days_to_post_from_first_response': the average number of days to post from first topic response. A 'day' is calculated by date, not hours
 * 'average_posts_per_author': the average posts per author (does not include enrollments with no posts)
 
+
+### Additional Explanations
+- `A 'day' is calculated by date, not hours`
+
+> For instance, for the topic discussion summary, if the topic was posted_at '2024-01-02 12pm' and there was 1 response at '2024-01-03 4pm', then the average_days_to_post would be 1
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for use with your own API tokens and Canvas domains.
