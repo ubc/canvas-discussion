@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const { DateTime } = require('luxon')
+const natural = require('natural')
 
 const toPacificTimeString = (date) => 
   date
@@ -35,9 +36,13 @@ const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',
 
 // Word count function
 const getWordCount = (str) => {
+  tokenizer = new natural.WordTokenizer()
+
   const cleanStr = stripHTML(escapeComment(str))
   //const cleanStr = str.replace(/<\/?[^>]+(>|$)/g, "") // Remove HTML tags
-  return cleanStr.trim().split(/\s+/).length
+  const tokens = tokenizer.tokenize(cleanStr)
+  const tokenCount = tokens.length 
+  return tokenCount
 }
 
 // Function to calculate the topic summary
