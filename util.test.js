@@ -1,8 +1,16 @@
-const { escapeComment, stripHTML, writeHeader, appendRow, getWordCount } = require('./util')
+const { escapeComment, stripHTML, writeHeader, appendRow, getWordCount, getDateDiff } = require('./util')
 const fs = require('fs')
 const path = require('path')
 
 describe('Utils Functions', () => {
+
+	describe('getDateDiff', () => {
+		it('should return 0 if the same date'), () => {
+			const referenceTimestamp = '2024-06-22T00:23:54Z'
+			const relativeTimestamp = '2024-06-22T15:23:54Z'
+			expect(getDateDiff(referenceTimestamp, relativeTimestamp).toEqual(0))
+		}
+	})
 	
 	describe('escapeComment', () => {
 		it('should escape quotes in comments', () => {

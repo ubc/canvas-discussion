@@ -48,6 +48,12 @@ const getWordCount = (str) => {
   return tokenCount
 }
 
+const getDateDiff = (referenceTimestamp, relativeTimestamp) => {
+  const diffInDays = relativeTimestamp.diff(referenceTimestamp, 'days').days 
+  return Math.floor(diffInDays)
+
+}
+
 const msToHours = ms => ms / (1000 * 60 * 60)
 const msToDays = ms => ms / (1000 * 60 * 60 * 24)
 
@@ -119,5 +125,6 @@ module.exports = {
   writeHeader,
   appendRow,
   postStatistics,
-  toPacificTimeString
+  toPacificTimeString,
+  getDateDiff
 }
