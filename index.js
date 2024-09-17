@@ -4,16 +4,16 @@ const writeToCSV = require('./writeToCSV')
 const writeSummaryToCSV = require('./writeSummaryToCSV')
 const writeSummaryByModuleToCSV = require('./writeSummaryByModuleToCSV')
 require('dotenv').config()
-const R = require('ramda')
 
 const envVariableWarning = (msg) => {
   console.info(msg)
 }
+
 const envVariableError = (msg) => {
   console.error(msg)
   process.exit(1)
-
 }
+
 const checkEnvVariable = (varName, errMsg) => {
   if (!process.env[varName]) {
     if (varName === 'INCLUDE_MODULE_SUMMARY') {
@@ -56,7 +56,7 @@ const getNestedReplies = (replyObj, participants, topicId) => {
 const getDiscussionsAndTopics = async (courseId, topicIds) => {
   const fetchDetails = topicId => Promise.all([
     capi.getFullDiscussion(courseId, topicId),
-    capi.getDiscussionTopic(courseId, topicId),
+    capi.getDiscussionTopic(courseId, topicId)
   ])
 
   const discussionsAndTopics = await Promise.all(
@@ -98,18 +98,16 @@ const processDiscussionTopic = ({ discussion, topic }) => {
 const getDiscussions = async courseId => {
   const discussionTopicIds = await getDiscussionTopicIds(courseId)
   const discussionsAndTopics = await getDiscussionsAndTopics(courseId, discussionTopicIds)
-  
+
   return discussionsAndTopics.map(processDiscussionTopic)
 }
 
-
 const getPublishedModuleDiscussions = async courseId => {
-  
   const modules = await capi.getModules(courseId)
 
   const modulesWithDiscussionItems = await Promise.all(modules.map(async module => {
     const items = await capi.getModuleItems(courseId, module.id)
-    const discussionItems = items.filter(item => item.type === "Discussion" && item.published)
+    const discussionItems = items.filter(item => item.type === 'Discussion' && item.published)
 
     const discussionsAndTopics = await getDiscussionsAndTopics(courseId, discussionItems.map(item => item.content_id))
     const processedDiscussions = discussionsAndTopics.map(processDiscussionTopic)
@@ -129,7 +127,6 @@ const getPublishedModuleDiscussions = async courseId => {
   }))
 
   return modulesWithDiscussionItems
-
 }
 
 const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim())
@@ -137,18 +134,18 @@ const returnSummaryByModule = process.env.INCLUDE_MODULE_SUMMARY ? process.env.I
 
 Promise.all(
   courseIds.map(courseId => {
-    const basePromise = getDiscussions(courseId).then(discussions => 
+    const basePromise = getDiscussions(courseId).then(discussions =>
       Promise.all([
-        writeToCSV(courseId, discussions),  // Writes detailed discussion data to CSV
-        writeSummaryToCSV(courseId, discussions)  // Writes summary of discussion data to CSV
+        writeToCSV(courseId, discussions), // Writes detailed discussion data to CSV
+        writeSummaryToCSV(courseId, discussions) // Writes summary of discussion data to CSV
       ])
     )
 
     const additionalPromise = returnSummaryByModule
-      ? getPublishedModuleDiscussions(courseId).then(modulesWithDiscussionItems => 
-          writeSummaryByModuleToCSV(courseId, modulesWithDiscussionItems)  // Writes summary of module data to CSV
-        )
-      : Promise.resolve()  // No additional operation if condition is false
+      ? getPublishedModuleDiscussions(courseId).then(modulesWithDiscussionItems =>
+        writeSummaryByModuleToCSV(courseId, modulesWithDiscussionItems) // Writes summary of module data to CSV
+      )
+      : Promise.resolve() // No additional operation if condition is false
 
     return Promise.all([basePromise, additionalPromise])
   })

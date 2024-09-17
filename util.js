@@ -16,9 +16,9 @@ const toDateTime = (str) => {
 
   try {
     const dateTime = DateTime.fromISO(str, { zone: 'utc' })
-    return dateTime.isValid ? dateTime : null  // Return null if the DateTime is invalid
+    return dateTime.isValid ? dateTime : null 
   } catch {
-    return null  // Return null if an error occurs
+    return null 
   }
 }
 

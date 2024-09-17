@@ -8,22 +8,20 @@ const topicSummary = (topic) => {
   const postSummary = postStatistics(posts, topicCreatedAt)
 
   return postSummary
-
 }
 
 // Function to write the summary to CSV
 const writeSummaryToCSV = (courseId, data) => {
-
   console.log(`Writing summary of discussion data for course: ${courseId}`)
   const csvPath = path.join(__dirname, `output/${courseId}-discussion-summary.csv`)
 
   const headers = [
     'topic_id',
     'topic_title',
-    //'topic_message',
+    // 'topic_message',
     'topic_author_id',
     'topic_author_name',
-    'topic_created_at', 
+    'topic_created_at',
     'topic_posted_at',
     'number_of_posts',
     'median_posts_word_count',
@@ -42,7 +40,7 @@ const writeSummaryToCSV = (courseId, data) => {
     const topicDetails = {
       topic_id: discussion.topicId,
       topic_title: stripHTML(escapeComment(discussion.topicTitle)),
-      //topic_message: stripHTML(escapeComment(discussion.topicMessage)),
+      // topic_message: stripHTML(escapeComment(discussion.topicMessage)),
       topic_author_id: discussion.topicAuthorId,
       topic_author_name: escapeComment(discussion.topicAuthorName),
       topic_created_at: toPacificTimeString(discussion.topicCreatedAt),

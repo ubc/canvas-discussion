@@ -1,11 +1,11 @@
 
 const path = require('path')
-const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toPacificTimeString } = require('./util') 
+const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toPacificTimeString } = require('./util')
 
 // Function to calculate the module summary
 const moduleSummary = (module) => {
   const posts = module.discussionItems.map(item => item.discussionAndReplies.replies).flat().flat()
-  const moduleUnlockedAt  = new Date(module.unlock_at)
+  const moduleUnlockedAt = new Date(module.unlock_at)
 
   const postSummary = postStatistics(posts, moduleUnlockedAt)
 
