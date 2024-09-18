@@ -60,7 +60,8 @@ const round = (num, decimalPlaces) => {
   }
 
   const factor = 10 ** decimalPlaces
-  return Math.round(num * factor) / factor
+  roundedNum = Math.round(num * factor) / factor
+  return roundedNum.toFixed(decimalPlaces)
 }
 
 // Word count function
@@ -107,8 +108,8 @@ const postStatistics = (posts, referenceTimestamp) => {
 
   if (numberOfPosts === 0) {
     return {
-      numberOfPosts: 0,
-      medianWordCount: 0,
+      numberOfPosts: (0).toFixed(2),
+      medianWordCount: (0).toFixed(2),
       averageTimeDiff: null,
       firstReplyTimestamp: null,
       averageTimeDiffFromReference: null,
