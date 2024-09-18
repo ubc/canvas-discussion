@@ -15,11 +15,7 @@ const envVariableError = (msg) => {
 
 const checkEnvVariable = (varName, errMsg) => {
   if (!process.env[varName]) {
-    if (varName === 'INCLUDE_MODULE_SUMMARY') {
-      envVariableWarning(errMsg)
-    } else {
-      envVariableError(`Error: ${errMsg}. See README for an example.env`)
-    }
+    envVariableError(`Error: ${errMsg}. See README for an example.env`)
   }
 }
 
