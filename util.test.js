@@ -1,5 +1,6 @@
 /* global describe it expect beforeEach beforeAll */
-const { escapeComment, stripHTML, writeHeader, appendRow, getWordCount, getDateDiff, toDateTime, convertToPacificTime } = require('./util')
+const { average, round, roundedAverage, escapeComment, stripHTML, writeHeader, appendRow, 
+  getWordCount, getDateDiff, toDateTime, convertToPacificTime } = require('./util')
 const fs = require('fs')
 const path = require('path')
 const { DateTime } = require('luxon')
@@ -194,6 +195,121 @@ describe('Utils Functions', () => {
       const input = 'should count speling mistakes'
       const expected = 4
       expect(getWordCount(input)).toBe(expected)
+    })
+  })
+
+  describe('average', () => {
+    test('should return 0 for an empty array', () => {
+      expect(average([])).toBe(0)
+    })
+  
+    test('should return the correct average for a non-empty array', () => {
+      expect(average([1, 2, 3, 4, 5])).toBe(3)
+      expect(average([10, 20, 30, 40, 50])).toBe(30)
+    })
+  
+    test('should handle arrays with negative numbers', () => {
+      expect(average([-1, -2, -3, -4, -5])).toBe(-3)
+    })
+  
+    test('should handle arrays with mixed positive and negative numbers', () => {
+      expect(average([-1, 0, 1])).toBe(0)
+      expect(average([-1, -2, 3, 4])).toBe(1)
+    })
+  
+    test('should handle arrays with floating-point numbers', () => {
+      expect(average([1.5, 2.5, 3.5])).toBe(2.5)
+    })
+  
+    test('should return NaN when array contains non-numeric values', () => {
+      expect(average([1, 'a', 3])).toBeNaN()
+    })
+  
+    test('should handle an array with a single value correctly', () => {
+      expect(average([7])).toBe(7)
+    })
+  })
+
+  describe('round', () => {
+    test('should round to the nearest integer', () => {
+      expect(round(1.234, 0)).toBe(1)
+      expect(round(1.5, 0)).toBe(2)
+      expect(round(-1.5, 0)).toBe(-1) //Math expected behaviour
+    })
+
+    test('should round integers or add decimal', () => {
+      expect(round(1, 0)).toBe(1)
+      expect(round(1, 1)).toBe(1.0)
+    })
+  
+    test('should round to one decimal place', () => {
+      expect(round(1.234, 1)).toBe(1.2)
+      expect(round(1.25, 1)).toBe(1.3)
+      expect(round(-1.25, 1)).toBe(-1.2)
+    })
+  
+    test('should round to two decimal places', () => {
+      expect(round(1.234, 2)).toBe(1.23)
+      expect(round(1.235, 2)).toBe(1.24)
+      expect(round(-1.235, 2)).toBe(-1.24)
+    })
+  
+    test('should handle large numbers', () => {
+      expect(round(123456.789, 2)).toBe(123456.79)
+      expect(round(-123456.789, 2)).toBe(-123456.79)
+    })
+  
+    test('should handle zero decimal places', () => {
+      expect(round(1.234, 0)).toBe(1)
+      expect(round(-1.234, 0)).toBe(-1)
+    })
+  
+    test('should handle cases where the number is already rounded', () => {
+      expect(round(1.0, 2)).toBe(1.00)
+      expect(round(1.23, 2)).toBe(1.23)
+      expect(round(-1.23, 2)).toBe(-1.23)
+    })
+  
+    test('should return TypeError for invalid input', () => {
+      expect(() => round('string', 2)).toThrow(TypeError)
+      expect(() => round(null, 2)).toThrow(TypeError)
+      expect(() => round(undefined, 2)).toThrow(TypeError)
+      expect(() => round(1.23, 'two')).toThrow(TypeError)
+    })
+  })
+
+  describe('roundedAverage', () => {
+    test('should calculate and round the average of positive numbers', () => {
+      expect(roundedAverage([1, 2, 3, 4, 5], 0)).toBe(3) // Average is 3
+      expect(roundedAverage([1, 2, 3, 4, 5], 1)).toBe(3.0) // Average is 3.0
+      expect(roundedAverage([1, 2, 3, 4, 5], 2)).toBe(3.00) // Average is 3.00
+    })
+  
+    test('should calculate and round the average of negative numbers', () => {
+      expect(roundedAverage([-1, -2, -3, -4, -5], 0)).toBe(-3) // Average is -3
+      expect(roundedAverage([-1, -2, -3, -4, -5], 1)).toBe(-3.0) // Average is -3.0
+      expect(roundedAverage([-1, -2, -3, -4, -5], 2)).toBe(-3.00) // Average is -3.00
+    })
+  
+    test('should calculate and round the average of mixed numbers', () => {
+      expect(roundedAverage([1, -1, 2, -2], 0)).toBe(0) // Average is 0
+      expect(roundedAverage([1, -1, 2, -2], 1)).toBe(0.0) // Average is 0.0
+      expect(roundedAverage([1, -1, 2, -2], 2)).toBe(0.00) // Average is 0.00
+    })
+  
+    test('should handle empty array', () => {
+      expect(roundedAverage([], 2)).toBe(0) // Average of an empty array is 0
+    })
+  
+    test('should handle single-element array', () => {
+      expect(roundedAverage([5], 0)).toBe(5) // Average is 5
+      expect(roundedAverage([5], 2)).toBe(5.00) // Average is 5.00
+    })
+  
+    test('should handle arrays with decimal numbers', () => {
+      expect(roundedAverage([1.1, 2.2, 3.3], 0)).toBe(2) // Average is 2.2, rounded to 2
+      expect(roundedAverage([1.1, 2.2, 3.3], 1)).toBe(2.2) // Average is 2.2, rounded to 2.2
+      expect(roundedAverage([1.1, 2.2, 3.3], 2)).toBe(2.20) // Average is 2.2, rounded to 2.20
     })
   })
 })

@@ -41,11 +41,26 @@ const average = (arr) => {
   return sum / arr.length
 }
 
+const roundedAverage = (arr, decimalPlaces) => {
+  const avg = average(arr)
+  const roundedAverage = round(avg, decimalPlaces)
+  return roundedAverage
+}
+
 // median from array
 const median = (arr) => {
   const sorted = arr.slice().sort()
   const mid = Math.floor(sorted.length / 2)
   return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
+}
+
+const round = (num, decimalPlaces) => {
+  if (typeof num !== 'number' || typeof decimalPlaces !== 'number') {
+    throw new TypeError('Both arguments must be numbers')
+  }
+
+  const factor = 10 ** decimalPlaces
+  return Math.round(num * factor) / factor
 }
 
 // Word count function
@@ -83,7 +98,7 @@ const calculateAverageDiffInDays = (posts, referenceTimestamp) => {
 		.filter(dayDifference => dayDifference !== null)
 
 	// Return the average of the differences, or null if there are no valid differences
-	return differences.length > 0 ? average(differences) : null
+	return differences.length > 0 ? roundedAverage(differences, 2) : null
 }
 
 // Function to calculate the topic summary
@@ -110,7 +125,7 @@ const postStatistics = (posts, referenceTimestamp) => {
   const firstReplyTimestamp = DateTime.fromMillis(firstReplyMS, { zone: 'utc' });
 
   const wordCounts = posts.map(post => getWordCount(post.postMessage))
-  const medianWordCount = Math.round(median(wordCounts) * 10) / 10
+  const medianWordCount = round(median(wordCounts), 2)
 
   const postCountsByAuthor = posts.reduce((acc, post) => {
     acc[post.postAuthorId] = (acc[post.postAuthorId] || 0) + 1
@@ -118,7 +133,7 @@ const postStatistics = (posts, referenceTimestamp) => {
   }, {})
 
   const postCounts = Object.values(postCountsByAuthor)
-  const averagePostsPerAuthor = parseFloat(average(postCounts).toFixed(1))
+  const averagePostsPerAuthor = roundedAverage(postCounts, 2)
 
   const averageTimeDiffFromReference = calculateAverageDiffInDays(posts, referenceTimestamp)
   const averageTimeDiffFromFirst = calculateAverageDiffInDays(posts, firstReplyTimestamp)
@@ -145,5 +160,8 @@ module.exports = {
   convertToPacificTime,
   getDateDiff,
   getWordCount,
-  toDateTime
+  toDateTime, 
+  average,
+  round,
+  roundedAverage
 }
