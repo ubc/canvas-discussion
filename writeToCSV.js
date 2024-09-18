@@ -15,6 +15,8 @@ const writeToCSV = (courseId, data) => {
     'topic_author_name',
     'topic_created_at',
     'topic_posted_at',
+    'topic_created_at',
+    'topic_posted_at',
     'post_author_id',
     'post_author_name',
     'post_id',
@@ -23,7 +25,10 @@ const writeToCSV = (courseId, data) => {
     'post_likes',
     'post_timestamp'
   ]
+  ]
 
+  // Write the headers to the CSV file
+  writeHeader(csvPath, headers)
   // Write the headers to the CSV file
   writeHeader(csvPath, headers)
 
@@ -54,7 +59,10 @@ const writeToCSV = (courseId, data) => {
       })
     } else {
       appendRow(csvPath, Object.values(topicDetails))
+      appendRow(csvPath, Object.values(topicDetails))
     }
+  })
+}
   })
 }
 

@@ -7,12 +7,18 @@
 ### Data
 > `{course_id}-discussion.csv`  
 
+
+### Data
+> `{course_id}-discussion.csv`  
+
 This project pulls data via the Canvas API the discussions for the specified Canvas course(s) and exports the results as CSV. The columns exported are:
 * 'topic_id',
 * 'topic_title',
 * 'topic_message',
 * 'topic_author_id',
 * 'topic_author_name',
+* 'topic_created_at',
+* 'topic_posted_at',
 * 'topic_created_at',
 * 'topic_posted_at',
 * 'post_author_id',
@@ -76,6 +82,7 @@ These instructions will get you a copy of the project up and running on your loc
     CANVAS_API_TOKEN=22322...
     CANVAS_API_DOMAIN=https://ubc.instructure.com/api/v1
     COURSE_IDS=1111,1112
+    INCLUDE_MODULE_SUMMARY=false
     ```
 2. Run the script. `npm start`.
 3. A `{course_id}-discussion.csv` and a ` {course_id}-discussion-summary.csv` file should be generated with discussion data in the output folder for each provided course_id.
