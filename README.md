@@ -45,21 +45,6 @@ Where a `post` is a response to a topic, and a `reply` is a reply to the post.
 
 ![alt text](image-1.png)
 
-> `{course_id}-module-discussion-summary.csv`
-
-We have calculated summary metrics at the level of `module` where there are multiple discussion topics. This is optional (see .env creation above) The csv with the summary information includes the following columns:
-
-* 'module_id',
-* 'module_name',
-* 'module_unlock_at': assuming the course uses an unlock_at date this will be used to calculate,
-* 'number_of_posts': the total number of posts and replies in the module
-* 'median_posts_word_count': the median word count for all posts and replies to the module topics
-* 'average_days_to_post_from_unlock_at': the average number of days to post or reply from the module's unlock_at date
-* 'first_reply_timestamp': the timestamp of the first post
-* 'average_days_to_post_from_first_response': the average number of days to post from first topic response. A 'day' is calculated by date, not hours
-* 'average_posts_per_author': the average posts per author (does not include enrollments with no posts)
-
-
 ### Additional Explanations
 - `A 'day' is calculated by date, not hours`
 
@@ -84,17 +69,16 @@ These instructions will get you a copy of the project up and running on your loc
 1. Create a `.env` file.
 1. Add the following: `CANVAS_API_TOKEN={YOUR API TOKEN}`, `CANVAS_API_DOMAIN={YOUR API DOMAIN}`, `COURSE_IDS={YOUR COURSE ID(s)}`. > - At UBC the `CANVAS_API_DOMAIN` is `https://ubc.instructure.com/api/v1`
     > - At another institution it might be something like `https://{school}.instructure.com/api/v1`
-1. Add `INCLUDE_MODULE_SUMMARY=true` (or `INCLUDE_MODULE_SUMMARY=false`) to indicate whether you would like to include a summary grouped by module. If this is not in the .env it will default to false and no module summary will be created. 
+
 
     Your .env file should look like
     ```
     CANVAS_API_TOKEN=22322...
     CANVAS_API_DOMAIN=https://ubc.instructure.com/api/v1
     COURSE_IDS=1111,1112
-    INCLUDE_MODULE_SUMMARY=false
     ```
-1. Run the script. `npm start`.
-1. A `{course_id}-discussion.csv` and a ` {course_id}-discussion-summary.csv` file should be generated with discussion data in the output folder for each provided course_id. If you have set `INCLUDE_MODULE_SUMMARY` to `true` then you will also see a file `{course_id}-module-discussion-summary.csv`. 
+2. Run the script. `npm start`.
+3. A `{course_id}-discussion.csv` and a ` {course_id}-discussion-summary.csv` file should be generated with discussion data in the output folder for each provided course_id.
 
 ## Authors
 

@@ -2,7 +2,6 @@ const capi = require('node-canvas-api')
 const { flatten, toDateTime } = require('./util')
 const writeToCSV = require('./writeToCSV')
 const writeSummaryToCSV = require('./writeSummaryToCSV')
-const writeSummaryByModuleToCSV = require('./writeSummaryByModuleToCSV')
 require('dotenv').config()
 
 const envVariableWarning = (msg) => {
@@ -25,7 +24,6 @@ const checkEnvVariable = (varName, errMsg) => {
 }
 
 checkEnvVariable('COURSE_IDS', 'COURSE_IDS environment variable is not defined.')
-checkEnvVariable('INCLUDE_MODULE_SUMMARY', 'INCLUDE_MODULE_SUMMARY environment variable is not defined. Define and set to `true` to include summary at module.')
 checkEnvVariable('CANVAS_API_TOKEN', 'CANVAS_API_TOKEN environment variable is not defined. You need a token to run this script.')
 checkEnvVariable('CANVAS_API_DOMAIN', 'CANVAS_API_DOMAIN environment variable is not defined.')
 
@@ -102,52 +100,16 @@ const getDiscussions = async courseId => {
   return discussionsAndTopics.map(processDiscussionTopic)
 }
 
-const getPublishedModuleDiscussions = async courseId => {
-  const modules = await capi.getModules(courseId)
-
-  const modulesWithDiscussionItems = await Promise.all(modules.map(async module => {
-    const items = await capi.getModuleItems(courseId, module.id)
-    const discussionItems = items.filter(item => item.type === 'Discussion' && item.published)
-
-    const discussionsAndTopics = await getDiscussionsAndTopics(courseId, discussionItems.map(item => item.content_id))
-    const processedDiscussions = discussionsAndTopics.map(processDiscussionTopic)
-
-    const discussionItemWithDiscussionData = discussionItems.map(discussionItem => {
-      const discussionAndReplies = processedDiscussions.find(d => d.topicId === discussionItem.content_id)
-      return {
-        ...discussionItem,
-        discussionAndReplies
-      }
-    })
-
-    return {
-      ...module,
-      discussionItems: discussionItemWithDiscussionData
-    }
-  }))
-
-  return modulesWithDiscussionItems
-}
-
 const courseIds = process.env.COURSE_IDS.split(',').map(id => id.trim())
-const returnSummaryByModule = process.env.INCLUDE_MODULE_SUMMARY ? process.env.INCLUDE_MODULE_SUMMARY === 'true' : false
 
 Promise.all(
   courseIds.map(courseId => {
-    const basePromise = getDiscussions(courseId).then(discussions =>
+    getDiscussions(courseId).then(discussions =>
       Promise.all([
         writeToCSV(courseId, discussions), // Writes detailed discussion data to CSV
         writeSummaryToCSV(courseId, discussions) // Writes summary of discussion data to CSV
       ])
     )
-
-    const additionalPromise = returnSummaryByModule
-      ? getPublishedModuleDiscussions(courseId).then(modulesWithDiscussionItems =>
-        writeSummaryByModuleToCSV(courseId, modulesWithDiscussionItems) // Writes summary of module data to CSV
-      )
-      : Promise.resolve() // No additional operation if condition is false
-
-    return Promise.all([basePromise, additionalPromise])
   })
 ).catch(error => {
   console.error('Error processing discussions and modules:', error.message || `An unexpected error occurred: ${error}`)
