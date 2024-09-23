@@ -56,7 +56,6 @@ const writeToCSV = (courseId, data) => {
       })
     } else {
       appendRow(csvPath, Object.values(topicDetails))
-      appendRow(csvPath, Object.values(topicDetails))
     }
   })
 }
