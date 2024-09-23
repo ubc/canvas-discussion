@@ -21,12 +21,12 @@ const writeSummaryToCSV = (courseId, data) => {
     'topic_author_id',
     'topic_author_name',
     'topic_posted_at',
-    'number_of_posts',
-    'average_posts_per_author',
-    'median_posts_word_count',
-    'average_days_to_post_from_posted_at',
-    'first_reply_timestamp',
-    'average_days_to_post_from_first_response'
+    'number_of_responses',
+    'average_responses_per_author',
+    'median_responses_word_count',
+    'average_days_to_respond_from_posted_at',
+    'first_response_timestamp',
+    'average_days_to_respond_from_first_response'
   ]
 
   // Write the headers to the CSV file
@@ -41,11 +41,11 @@ const writeSummaryToCSV = (courseId, data) => {
       topic_author_id: discussion.topicAuthorId,
       topic_author_name: escapeComment(discussion.topicAuthorName),
       topic_posted_at: convertToPacificTime(toDateTime(discussion.topicPostedAt)),
-      number_of_posts: formatNumberOutput(summary.numberOfPosts),
-      average_posts_per_author: formatNumberOutput(summary.averagePostsPerAuthor),
+      number_of_responses: formatNumberOutput(summary.numberOfPosts),
+      average_responses_per_author: formatNumberOutput(summary.averagePostsPerAuthor),
       median_word_count: formatNumberOutput(summary.medianWordCount),
       average_time_to_post_from_reference_days: formatNumberOutput(summary.averageTimeDiffFromReference),
-      first_reply_timestamp: convertToPacificTime(summary.firstReplyTimestamp),
+      first_response_timestamp: convertToPacificTime(summary.firstReplyTimestamp),
       average_time_to_post_from_first_days: formatNumberOutput(summary.averageTimeDiffFromFirst)
 
     }

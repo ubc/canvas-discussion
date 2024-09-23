@@ -15,15 +15,13 @@ const writeToCSV = (courseId, data) => {
     'topic_author_name',
     'topic_created_at',
     'topic_posted_at',
-    'topic_created_at',
-    'topic_posted_at',
-    'post_author_id',
-    'post_author_name',
-    'post_id',
-    'post_parent_id',
-    'post_message',
-    'post_likes',
-    'post_timestamp'
+    'response_author_id',
+    'response_author_name',
+    'response_id',
+    'response_parent_id',
+    'response_message',
+    'response_likes',
+    'response_timestamp'
   ]
 
   // Write the headers to the CSV file
@@ -44,13 +42,13 @@ const writeToCSV = (courseId, data) => {
       discussion.replies.flat().forEach(post => {
         const postDetails = {
           ...topicDetails,
-          post_author_id: post.postAuthorId,
-          post_author_name: escapeComment(post.postAuthorName),
-          post_id: post.postId,
-          post_parent_id: post.postParentId,
-          post_message: stripHTML(escapeComment(post.postMessage)),
-          post_likes: post.postLikes,
-          post_timestamp: convertToPacificTime(toDateTime(post.postTimestamp))
+          response_author_id: post.postAuthorId,
+          response_author_name: escapeComment(post.postAuthorName),
+          response_id: post.postId,
+          response_parent_id: post.postParentId,
+          response_message: stripHTML(escapeComment(post.postMessage)),
+          response_likes: post.postLikes,
+          response_timestamp: convertToPacificTime(toDateTime(post.postTimestamp))
         }
         appendRow(csvPath, Object.values(postDetails))
       })
