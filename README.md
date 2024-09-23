@@ -71,16 +71,14 @@ These instructions will get you a copy of the project up and running on your loc
     > - See [Get Started with the Canvas API](https://learninganalytics.ubc.ca/guides/get-started-with-the-canvas-api/) for more information.
     > - ⚠️ Your Canvas API token is the equivalent to your username and password and must be treated as such (following any security guidelines of your home institution).
 1. Create a `.env` file.
-1. Add the following: `CANVAS_API_TOKEN={YOUR API TOKEN}`, `CANVAS_API_DOMAIN={YOUR API DOMAIN}`, `COURSE_IDS={YOUR COURSE ID(s)}`. > - At UBC the `CANVAS_API_DOMAIN` is `https://ubc.instructure.com/api/v1`
-    > - At another institution it might be something like `https://{school}.instructure.com/api/v1`
-
-
+1. Add the following: `CANVAS_API_TOKEN={YOUR API TOKEN}`, `CANVAS_API_DOMAIN={YOUR API DOMAIN}`, `COURSE_IDS={YOUR COURSE ID(s)}`. 
+     - At UBC the `CANVAS_API_DOMAIN` is `https://ubc.instructure.com/api/v1`
+     - At another institution it might be something like `https://{school}.instructure.com/api/v1`
     Your .env file should look like
     ```
     CANVAS_API_TOKEN=22322...
     CANVAS_API_DOMAIN=https://ubc.instructure.com/api/v1
     COURSE_IDS=1111,1112
-    INCLUDE_MODULE_SUMMARY=false
     ```
 2. Run the script. `npm start`.
 3. A `{course_id}-discussion.csv` and a ` {course_id}-discussion-summary.csv` file should be generated with discussion data in the output folder for each provided course_id.
