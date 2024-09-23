@@ -35,17 +35,19 @@ Where a `topic` corresponds to a `discussion_topic` and `post` refers to all rep
 > `{course_id}-discussion-summary.csv`
 
 We have calculated summary metrics for each topic. The csv with the summary information includes the following columns:
+
 * 'topic_id',
 * 'topic_title',
 * 'topic_author_id',
 * 'topic_author_name',
 * 'topic_posted_at',
 * 'number_of_posts': the total number of posts and replies in the topic
+* 'average_posts_per_author': the average posts per author (does not include enrollments with no posts)
 * 'median_posts_word_count': the median word count for all posts and replies to the topic
 * 'average_days_to_post_from_posted_at': the average number of days to post from the topic posted_at date. A 'day' is calculated by date, not hours
 * 'first_reply_timestamp': the timestamp of the first post
 * 'average_days_to_post_from_first_response': the average number of days to post from first topic response. A 'day' is calculated by date, not hours
-* 'average_posts_per_author': the average posts per author (does not include enrollments with no posts)
+
 
 Where a `post` is a response to a topic, and a `reply` is a reply to the post. 
 
@@ -53,8 +55,10 @@ Where a `post` is a response to a topic, and a `reply` is a reply to the post.
 
 ### Additional Explanations
 - `A 'day' is calculated by date, not hours`
+> For instance, for the topic discussion summary, if the topic was posted_at '2024-01-02 12pm' and there was 1 response at '2024-01-03 4pm', then the average_days_to_post would be 1. If the topic as was posted_at '2024-01-01' and all replies were the same day ('2024-01-01') then the average_days_to_post would be 0. 
 
-> For instance, for the topic discussion summary, if the topic was posted_at '2024-01-02 12pm' and there was 1 response at '2024-01-03 4pm', then the average_days_to_post would be 1
+- `does not include enrollments with no posts`
+> The calculations are only based on posts or authors who contribute, not expected posts or number of authors; for instance, in a class of 10 students, if 5 students made 1 post each and 5 students made 0 posts the `average_posts_per_author` is 1 (mean: 1,1,1,1,1), **not** 0.5 (mean: 1,1,1,1,1,0,0,0,0,0). 
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for use with your own API tokens and Canvas domains.
