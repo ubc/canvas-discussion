@@ -1,13 +1,39 @@
 const fs = require('fs')
 const path = require('path')
 const { DateTime } = require('luxon')
+const natural = require('natural')
 
-const toPacificTimeString = (date) => 
-  date
-    ? DateTime.fromJSDate(date, { zone: 'utc' })   // Convert JS Date to Luxon DateTime in UTC
-        .setZone('America/Los_Angeles')           // Convert to Pacific Time
-        .toFormat('yyyy-MM-dd HH:mm:ss ZZZZ')     // Format the DateTime object
-    : null
+const escapeComment = comment => comment ? '"' + comment.replace(/"/g, "'") + '"' : ''
+
+const stripHTML = comment => comment ? comment.replace(/(<([^>]+)>)/gi, "").replace(/&nbsp;/g, " ") : ''
+
+const writeHeader = (pathToFile, headers) => fs.writeFileSync(pathToFile, headers + '\r\n')
+
+const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',') + '\r\n')
+
+const toDateTime = (str) => {
+  if (!str) 
+    return null  
+  try {
+    const dateTime = DateTime.fromISO(str, { zone: 'utc' })
+    return dateTime.isValid ? dateTime : null 
+  } catch {
+    return null 
+  }
+}
+
+function formatNumberOutput(value, decimalPlaces = 2, defaultValue = '') {
+  return value != null && !isNaN(value) 
+    ? Number(value).toFixed(decimalPlaces) 
+    : defaultValue
+}
+
+const convertToPacificTime = (dateTime) => {
+  if (dateTime && dateTime.isValid) {
+    return dateTime.setZone('America/Los_Angeles')
+  }
+  return null  // Return null if the DateTime is invalid or not provided
+}
 
 const flatten = arr => arr.reduce((acc, cur) =>
   Array.isArray(cur)
@@ -21,6 +47,12 @@ const average = (arr) => {
   return sum / arr.length
 }
 
+const roundedAverage = (arr, decimalPlaces) => {
+  const avg = average(arr)
+  const roundedAverage = round(avg, decimalPlaces)
+  return roundedAverage
+}
+
 // median from array
 const median = (arr) => {
   const sorted = arr.slice().sort()
@@ -28,76 +60,99 @@ const median = (arr) => {
   return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
 }
 
-const escapeComment = comment => comment ? '"' + comment.replace(/"/g, "'") + '"' : ''
-const stripHTML = comment => comment ? comment.replace(/(<([^>]+)>)/gi, "").replace(/&nbsp;/g, " ") : ''
-const writeHeader = (pathToFile, headers) => fs.writeFileSync(pathToFile, headers + '\r\n')
-const appendRow = (pathToFile, row) => fs.appendFileSync(pathToFile, row.join(',') + '\r\n')
+const round = (num, decimalPlaces) => {
+  if (typeof num !== 'number' || typeof decimalPlaces !== 'number') {
+    throw new TypeError('Both arguments must be numbers')
+  }
+
+  const factor = 10 ** decimalPlaces
+  roundedNum = Math.round(num * factor) / factor
+  return roundedNum
+}
 
 // Word count function
 const getWordCount = (str) => {
+  tokenizer = new natural.WordTokenizer()
+
   const cleanStr = stripHTML(escapeComment(str))
   //const cleanStr = str.replace(/<\/?[^>]+(>|$)/g, "") // Remove HTML tags
-  return cleanStr.trim().split(/\s+/).length
+  const tokens = tokenizer.tokenize(cleanStr)
+  const tokenCount = tokens.length 
+  return tokenCount
+}
+
+const getDateDiff = (referenceTimestamp, relativeTimestamp) => {
+	const referenceDateTime = referenceTimestamp instanceof DateTime 
+		? referenceTimestamp 
+		: toDateTime(referenceTimestamp)
+
+	const relativeDateTime = relativeTimestamp instanceof DateTime 
+		? relativeTimestamp 
+		: toDateTime(relativeTimestamp)
+
+	const diffInDays = relativeDateTime.diff(referenceDateTime, 'days').days
+
+	return Math.floor(diffInDays)
+}
+
+const calculateAverageDiffInDays = (posts, referenceTimestamp) => {
+	if (referenceTimestamp === null) {
+		return null
+	}
+
+	const differences = posts
+		.map(post => getDateDiff(referenceTimestamp, post.postTimestamp))
+		.filter(dayDifference => dayDifference !== null)
+
+	// Return the average of the differences, or null if there are no valid differences
+	return differences.length > 0 ? roundedAverage(differences, 2) : null
 }
 
 // Function to calculate the topic summary
 const postStatistics = (posts, referenceTimestamp) => {
-  // Number of posts
   const numberOfPosts = posts.length
 
   if (numberOfPosts === 0) {
     return {
       numberOfPosts: 0,
-      medianWordCount: 0,
+      medianWordCount: null,
       averageTimeDiff: null,
       firstReplyTimestamp: null,
-      averageTimeToPostFromFirst: null,
+      averageTimeDiffFromReference: null,
+      averageTimeDiffFromFirst: null,
       averagePostsPerAuthor: null
     }
   }
 
-  // Word counts
+  const firstReplyMS = Math.min(
+    ...posts.map(
+    post => post.postTimestamp
+  ))
+
+  const firstReplyTimestamp = DateTime.fromMillis(firstReplyMS, { zone: 'utc' });
+
   const wordCounts = posts.map(post => getWordCount(post.postMessage))
-
-  const medianWordCount = Math.round(median(wordCounts) * 10) / 10
-
-  // Average time in hours from topicCreatedAt to postTimestamp
-  const timeDiffs = posts.map(post => {
-    return (post.postTimestamp - referenceTimestamp) 
-  })
-
-  const averageTimeDiff = parseFloat(average(timeDiffs).toFixed(1)) / (1000 * 60 * 60) // Convert from milliseconds to hours
+  const medianWordCount = round(median(wordCounts), 2)
 
   const postCountsByAuthor = posts.reduce((acc, post) => {
     acc[post.postAuthorId] = (acc[post.postAuthorId] || 0) + 1
     return acc
   }, {})
-  // Average number of posts per postAuthorId
 
   const postCounts = Object.values(postCountsByAuthor)
-  const averagePostsPerAuthor = parseFloat(average(postCounts).toFixed(1))
-  
-  const firstReplyTimestamp = new Date(Math.min(...posts.map(
-    post => new Date(post.postTimestamp))))
+  const averagePostsPerAuthor = roundedAverage(postCounts, 2)
 
-  const timeDiffsFromFirst = posts
-    .map(post => {
-      return post.postTimestamp > firstReplyTimestamp 
-        ? (post.postTimestamp - firstReplyTimestamp) / (1000 * 60 * 60) // Convert from milliseconds to hours
-        : null
-    })
-    .filter(diff => diff !== null)
-  
-  const averageTimeToPostFromFirst = timeDiffsFromFirst.length > 0
-    ? parseFloat(average(timeDiffsFromFirst).toFixed(1))
-    : 0
+  const averageTimeDiffFromReference = calculateAverageDiffInDays(posts, referenceTimestamp)
+  const averageTimeDiffFromFirst = calculateAverageDiffInDays(posts, firstReplyTimestamp)
+
     
   return {
     numberOfPosts,
     medianWordCount,
-    averageTimeDiff,
+    referenceTimestamp,
     firstReplyTimestamp,
-    averageTimeToPostFromFirst,
+    averageTimeDiffFromReference,
+    averageTimeDiffFromFirst,
     averagePostsPerAuthor
   }
 
@@ -109,5 +164,12 @@ module.exports = {
   writeHeader,
   appendRow,
   postStatistics,
-  toPacificTimeString
+  convertToPacificTime,
+  getDateDiff,
+  getWordCount,
+  toDateTime, 
+  average,
+  round,
+  roundedAverage,
+  formatNumberOutput
 }

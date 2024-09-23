@@ -1,36 +1,32 @@
 const path = require('path')
-const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toPacificTimeString } = require('./util') // Adjust the path as necessary
+const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toDateTime, convertToPacificTime, formatNumberOutput  } = require('./util') // Adjust the path as necessary
 
 const topicSummary = (topic) => {
   const posts = topic.replies.flat()
-  const topicCreatedAt = new Date(topic.topicCreatedAt)
+  const topicPostedAt = toDateTime(topic.topic_posted_at)
 
-  const postSummary = postStatistics(posts, topicCreatedAt)
+  const postSummary = postStatistics(posts, topicPostedAt)
 
   return postSummary
-
 }
 
 // Function to write the summary to CSV
 const writeSummaryToCSV = (courseId, data) => {
-
   console.log(`Writing summary of discussion data for course: ${courseId}`)
   const csvPath = path.join(__dirname, `output/${courseId}-discussion-summary.csv`)
 
   const headers = [
     'topic_id',
     'topic_title',
-    //'topic_message',
     'topic_author_id',
     'topic_author_name',
-    'topic_created_at', 
     'topic_posted_at',
-    'number_of_posts',
-    'median_posts_word_count',
-    'average_time_to_post_hours',
-    'first_reply_timestamp',
-    'average_time_to_post_from_first_reply_hours',
-    'average_posts_per_author'
+    'number_of_responses',
+    'average_responses_per_author',
+    'median_responses_word_count',
+    'average_days_to_respond_from_posted_at',
+    'first_response_timestamp',
+    'average_days_to_respond_from_first_response'
   ]
 
   // Write the headers to the CSV file
@@ -42,17 +38,16 @@ const writeSummaryToCSV = (courseId, data) => {
     const topicDetails = {
       topic_id: discussion.topicId,
       topic_title: stripHTML(escapeComment(discussion.topicTitle)),
-      //topic_message: stripHTML(escapeComment(discussion.topicMessage)),
       topic_author_id: discussion.topicAuthorId,
       topic_author_name: escapeComment(discussion.topicAuthorName),
-      topic_created_at: toPacificTimeString(discussion.topicCreatedAt),
-      topic_posted_at: toPacificTimeString(discussion.topicPostedAt),
-      number_of_posts: summary.numberOfPosts,
-      median_posts_word_count: summary.medianWordCount,
-      average_time_to_post_hours: summary.averageTimeDiff,
-      first_reply_timestamp: toPacificTimeString(summary.firstReplyTimestamp),
-      average_time_to_post_from_first_reply_hours: summary.averageTimeToPostFromFirst,
-      average_posts_per_author: summary.averagePostsPerAuthor
+      topic_posted_at: convertToPacificTime(toDateTime(discussion.topicPostedAt)),
+      number_of_responses: formatNumberOutput(summary.numberOfPosts),
+      average_responses_per_author: formatNumberOutput(summary.averagePostsPerAuthor),
+      median_word_count: formatNumberOutput(summary.medianWordCount),
+      average_time_to_post_from_reference_days: formatNumberOutput(summary.averageTimeDiffFromReference),
+      first_response_timestamp: convertToPacificTime(summary.firstReplyTimestamp),
+      average_time_to_post_from_first_days: formatNumberOutput(summary.averageTimeDiffFromFirst)
+
     }
     appendRow(csvPath, Object.values(topicDetails))
   })
