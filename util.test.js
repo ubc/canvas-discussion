@@ -85,14 +85,14 @@ describe('Utils Functions', () => {
 
     it('should return 1 if the relativeDate is the next day any time', () => {
       const referenceTimestamp = '2024-06-22T00:23:54Z'
-      const relativeTimestamp = '2024-06-23T12:23:54Z' // Same date and time
+      const relativeTimestamp = '2024-06-23T12:23:54Z' // one day
 
       expect(getDateDiff(referenceTimestamp, relativeTimestamp)).toBe(1)
     })
 
     it('should return 10 if the relativeDate is 10 days later', () => {
       const referenceTimestamp = '2024-06-10T00:23:54Z'
-      const relativeTimestamp = '2024-06-20T12:23:54Z' // Same date and time
+      const relativeTimestamp = '2024-06-20T12:23:54Z' // 10 days 
 
       expect(getDateDiff(referenceTimestamp, relativeTimestamp)).toBe(10)
     })
