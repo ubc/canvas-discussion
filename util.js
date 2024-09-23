@@ -22,6 +22,12 @@ const toDateTime = (str) => {
   }
 }
 
+function formatNumberOutput(value, decimalPlaces = 2, defaultValue = '') {
+  return value != null && !isNaN(value) 
+    ? Number(value).toFixed(decimalPlaces) 
+    : defaultValue
+}
+
 const convertToPacificTime = (dateTime) => {
   if (dateTime && dateTime.isValid) {
     return dateTime.setZone('America/Los_Angeles')
@@ -61,7 +67,7 @@ const round = (num, decimalPlaces) => {
 
   const factor = 10 ** decimalPlaces
   roundedNum = Math.round(num * factor) / factor
-  return roundedNum.toFixed(decimalPlaces)
+  return roundedNum
 }
 
 // Word count function
@@ -108,8 +114,8 @@ const postStatistics = (posts, referenceTimestamp) => {
 
   if (numberOfPosts === 0) {
     return {
-      numberOfPosts: (0).toFixed(2),
-      medianWordCount: (0).toFixed(2),
+      numberOfPosts: 0,
+      medianWordCount: null,
       averageTimeDiff: null,
       firstReplyTimestamp: null,
       averageTimeDiffFromReference: null,
@@ -164,5 +170,6 @@ module.exports = {
   toDateTime, 
   average,
   round,
-  roundedAverage
+  roundedAverage,
+  formatNumberOutput
 }

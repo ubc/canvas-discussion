@@ -1,5 +1,5 @@
 const path = require('path')
-const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toDateTime, convertToPacificTime  } = require('./util') // Adjust the path as necessary
+const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toDateTime, convertToPacificTime, formatNumberOutput  } = require('./util') // Adjust the path as necessary
 
 const topicSummary = (topic) => {
   const posts = topic.replies.flat()
@@ -22,11 +22,11 @@ const writeSummaryToCSV = (courseId, data) => {
     'topic_author_name',
     'topic_posted_at',
     'number_of_posts',
+    'average_posts_per_author',
     'median_posts_word_count',
     'average_days_to_post_from_posted_at',
     'first_reply_timestamp',
-    'average_days_to_post_from_first_response',
-    'average_posts_per_author'
+    'average_days_to_post_from_first_response'
   ]
 
   // Write the headers to the CSV file
@@ -38,17 +38,16 @@ const writeSummaryToCSV = (courseId, data) => {
     const topicDetails = {
       topic_id: discussion.topicId,
       topic_title: stripHTML(escapeComment(discussion.topicTitle)),
-      // topic_message: stripHTML(escapeComment(discussion.topicMessage)),
       topic_author_id: discussion.topicAuthorId,
       topic_author_name: escapeComment(discussion.topicAuthorName),
       topic_posted_at: convertToPacificTime(toDateTime(discussion.topicPostedAt)),
-      number_of_posts: summary.numberOfPosts,
-      median_word_count: summary.medianWordCount,
-      average_time_to_post_from_reference_days: summary.averageTimeDiffFromReference,
+      number_of_posts: formatNumberOutput(summary.numberOfPosts),
+      average_posts_per_author: formatNumberOutput(summary.averagePostsPerAuthor),
+      median_word_count: formatNumberOutput(summary.medianWordCount),
+      average_time_to_post_from_reference_days: formatNumberOutput(summary.averageTimeDiffFromReference),
       first_reply_timestamp: convertToPacificTime(summary.firstReplyTimestamp),
-      average_time_to_post_from_first_days: summary.averageTimeDiffFromFirst,
-      average_posts_per_author: summary.averagePostsPerAuthor
- 
+      average_time_to_post_from_first_days: formatNumberOutput(summary.averageTimeDiffFromFirst)
+
     }
     appendRow(csvPath, Object.values(topicDetails))
   })
