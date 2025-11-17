@@ -18,6 +18,10 @@
   "overrides": {
     "request": {
       "form-data": "2.5.4"
-    }
+    },
+    "tmp": "0.2.4",
+    "cross-spawn": "6.0.6",
+    "js-yaml": "4.1.1",
+    "brace-expansion": "1.1.12"
   }
 }
