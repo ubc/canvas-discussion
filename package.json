@@ -22,6 +22,7 @@
     "tmp": "0.2.4",
     "cross-spawn": "6.0.6",
     "js-yaml": "4.1.1",
-    "brace-expansion": "1.1.12"
+    "brace-expansion": "1.1.12",
+    "tough-cookie": "4.1.3"
   }
 }
