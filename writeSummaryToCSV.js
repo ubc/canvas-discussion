@@ -1,5 +1,10 @@
-const path = require('path')
-const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toPacificTimeString } = require('./util') // Adjust the path as necessary
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+import { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toPacificTimeString } from './util.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const topicSummary = (topic) => {
   const posts = topic.replies.flat()
@@ -58,4 +63,4 @@ const writeSummaryToCSV = (courseId, data) => {
   })
 }
 
-module.exports = writeSummaryToCSV
+export default writeSummaryToCSV

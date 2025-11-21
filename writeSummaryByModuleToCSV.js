@@ -1,6 +1,10 @@
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const path = require('path')
-const { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toPacificTimeString } = require('./util') 
+import { escapeComment, stripHTML, writeHeader, appendRow, postStatistics, toPacificTimeString } from './util.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Function to calculate the module summary
 const moduleSummary = (module) => {
@@ -47,4 +51,4 @@ const writeSummaryByModuleToCSV = (courseId, modules) => {
   })
 }
 
-module.exports = writeSummaryByModuleToCSV
+export default writeSummaryByModuleToCSV
