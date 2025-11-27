@@ -1,6 +1,10 @@
-const path = require('path')
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const { escapeComment, stripHTML, writeHeader, appendRow, toPacificTimeString} = require('./util') // Adjust the path as necessary
+import { escapeComment, stripHTML, writeHeader, appendRow, toPacificTimeString } from './util.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const writeToCSV = (courseId, data) => {
 
@@ -59,4 +63,4 @@ const writeToCSV = (courseId, data) => {
   })
 }
 
-module.exports = writeToCSV;
+export default writeToCSV;

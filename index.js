@@ -1,9 +1,12 @@
-const capi = require('node-canvas-api')
-const { flatten } = require('./util')
-const writeToCSV = require('./writeToCSV')
-const writeSummaryToCSV = require('./writeSummaryToCSV')
-const writeSummaryByModuleToCSV = require('./writeSummaryByModuleToCSV')
-require('dotenv').config()
+import * as capi from 'node-canvas-api'
+import dotenv from 'dotenv'
+
+import { flatten } from './util.js'
+import writeToCSV from './writeToCSV.js'
+import writeSummaryToCSV from './writeSummaryToCSV.js'
+import writeSummaryByModuleToCSV from './writeSummaryByModuleToCSV.js'
+
+dotenv.config()
 
 const envVariableWarning = (msg) => {
   console.info(msg)

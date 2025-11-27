@@ -1,6 +1,6 @@
-const fs = require('fs')
-const path = require('path')
-const { DateTime } = require('luxon')
+import fs from 'fs'
+import path from 'path'
+import { DateTime } from 'luxon'
 
 const toPacificTimeString = (date) => 
   date
@@ -102,7 +102,7 @@ const postStatistics = (posts, referenceTimestamp) => {
   }
 
 }
-module.exports = {
+export {
   flatten,
   escapeComment,
   stripHTML,
